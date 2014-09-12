@@ -1,3 +1,5 @@
+src/test/resources/application.conf
+
 #https://raw.githubusercontent.com/github/gitignore/master/Scala.gitignore
 *.class
 *.log
