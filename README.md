@@ -5,6 +5,8 @@ Scala wrapper around Digital Ocean's API, version 2
 
 Install SBT, clone this repository, and cd to it.
 
+
+```scala
 sbt
 
 console
@@ -21,5 +23,6 @@ val droplet = Await.result(Droplet.create(name, region, size, image, Seq.empty, 
 
 //destroy it
 droplet.delete
+```
 
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
