@@ -9,7 +9,8 @@ package object digitalocean {
       NetworkType.Serializer +
       Status.Serializer +
       Inet4AddressSerializer +
-      Inet6AddressSerializer
+      Inet6AddressSerializer +
+      ResourceTypeSerializer
   }
 
   implicit def Region2RegionEnum(r: Region): RegionEnum = {

@@ -1,13 +1,12 @@
 package me.jeffshaw.digitalocean
 
-import scala.concurrent._
-import scala.concurrent.duration._
+import scala.concurrent._, duration._
 
 class SizeSpec extends Spec {
   var cache: Option[Seq[Size]] = None
 
   def getCache: Seq[Size] = {
-    val regions = cache.getOrElse(Await.result(Size.list, 5 seconds))
+    val regions = cache.getOrElse(Await.result(Size.list, 5 seconds)).toSeq
 
     if (cache.isEmpty) {
       cache = Some(regions)
@@ -16,7 +15,7 @@ class SizeSpec extends Spec {
   }
 
   test("Sizes can be listed by the client") {
-    val sizes = Await.result(Size.list, 5 seconds)
+    val sizes = Await.result(Size.list, 5 seconds).toSeq
 
     if (cache.isEmpty) {
       cache = Some(sizes)

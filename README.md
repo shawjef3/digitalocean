@@ -38,4 +38,4 @@ Await.result(droplet.delete, 10 seconds)
 
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
 
-Note that this library currently does not support pagination, so all calls will only ever give the first page sent from Digital Ocean.
+As of version 0.2, this library supports pagination.

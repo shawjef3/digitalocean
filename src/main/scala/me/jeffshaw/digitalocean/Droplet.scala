@@ -2,10 +2,9 @@ package me.jeffshaw.digitalocean
 
 import java.time.Instant
 
-import org.json4s.JsonDSL._
-import org.json4s._
+import org.json4s._, JsonDSL._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent._
 
 case class Droplet(
   id: BigInt,
@@ -25,11 +24,11 @@ case class Droplet(
   snapshotIds: Seq[BigInt],
   features: Seq[String]
 ) {
-  def kernels(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Kernel]] = {
+  def kernels(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Kernel]] = {
     Droplet.kernels(id)
   }
 
-  def backups(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Image]] = {
+  def backups(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Image]] = {
     Droplet.backups(id)
   }
 
@@ -37,7 +36,7 @@ case class Droplet(
     Droplet.action(id, actionId)
   }
 
-  def actions(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Action]] = {
+  def actions(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Action]] = {
     Droplet.actions(id)
   }
 
@@ -49,7 +48,7 @@ case class Droplet(
     Droplet.reboot(id)
   }
 
-  def snapshots(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Snapshot]] = {
+  def snapshots(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Image]] = {
     Droplet.snapshots(id)
   }
 
@@ -71,6 +70,10 @@ case class Droplet(
 
   def passwordReset(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     Droplet.passwordReset(id)
+  }
+
+  def resize(size: SizeEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    Droplet.resize(id, size)
   }
 
   def resize(size: Size)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -125,75 +128,78 @@ case class Droplet(
     Droplet.enablePrivateNetworking(id)
   }
 
-  def snapshot(name: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+  def snapshot(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    snapshot(None)
+  }
+
+  def snapshot(name: Option[String])(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     Droplet.snapshot(id, name)
   }
 }
 
-object Droplet {
+object Droplet
+  extends Path
+  with Listable[Droplet, responses.Droplets] {
+    self =>
+
+  override val path: Seq[String] = Seq("droplets")
+
   def apply(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
+    val path = self.path :+ id.toString
     for {
-      response <- client.get[responses.Droplet]("droplets", id.toString)
+      response <- client.get[responses.Droplet](path: _*)
     } yield {
       response.droplet
     }
   }
 
-  def list(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Droplet]] = {
-    for {
-      response <- client.get[responses.Droplets]("droplets")
-    } yield {
-      response.droplets
-    }
-  }
-
   def delete(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
-    client.delete("droplets", id.toString)
+    val path = self.path :+ id.toString
+    client.delete(path: _*)
   }
 
-  def kernels(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Kernel]] = {
-    for {
-      response <- client.get[responses.Kernels]("droplet", id.toString, "kernels")
-    } yield {
-      response.kernels
-    }
+  def kernels(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Kernel]] = {
+    new Path with Listable[Kernel, responses.Kernels] {
+      override val path = self.path ++ Seq(id.toString, "kernels")
+    }.list
   }
 
-  def snapshots(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Snapshot]] = {
-    for {
-      response <- client.get[responses.Snapshots]("droplets", id.toString, "snapshots")
-    } yield {
-      response.snapshots
-    }
+  def snapshots(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Image]] = {
+    new Path with Listable[Image, responses.Snapshots] {
+      override val path = self.path ++ Seq(id.toString, "snapshots")
+    }.list
   }
 
-  def backups(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Image]] = {
-    for {
-      response <- client.get[responses.Backups]("droplets", id.toString, "backups")
-    } yield {
-      response.backups
-    }
+  def backups(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Image]] = {
+    new Path with Listable[Image, responses.Backups] {
+      override val path = self.path ++ Seq(id.toString, "backups")
+    }.list
   }
 
   def action(id: BigInt, actionId: BigInt)
       (implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    val path = self.path ++ Seq(id.toString, "actions", actionId.toString)
     for {
-      response <- client.get[responses.Action]("droplets", id.toString, "actions", actionId.toString)
+      response <- client.get[responses.Action](path: _*)
     } yield {
       response.action
     }
   }
 
-  def actions(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Action]] = {
-    for {
-      response <- client.get[responses.Actions]("droplets", id.toString, "actions")
-    } yield {
-      response.actions
-    }
+  def actions(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Action]] = {
+    new Path with Listable[Action, responses.Actions] {
+      override val path = self.path ++ Seq(id.toString, "actions")
+    }.list
   }
 
   private def performAction(id: BigInt, action: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> action), "droplets", id.toString, "actions")
+    val path = self.path ++ Seq(id.toString, "actions")
+    client.post[responses.Action](("type" -> action), path: _*).map(_.action)
+  }
+
+  private def performAction(id: BigInt, action: String, argument: JField)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    val path = self.path ++ Seq(id.toString, "actions")
+    client.post[responses.Action](("type" -> action) ~ argument, path: _*).map(_.action)
   }
 
   def reboot(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -220,12 +226,16 @@ object Droplet {
     performAction(id, "password_reset")
   }
 
+  def resize(id: BigInt, size: SizeEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    resize(id, size.slug)
+  }
+
   def resize(id: BigInt, size: Size)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     resize(id, size.slug)
   }
 
   def resize(id: BigInt, sizeSlug: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> "resize") ~ ("size" -> sizeSlug), "droplets", id.toString, "actions")
+    performAction(id, "resize", ("size" -> sizeSlug))
   }
 
   def restore(id: BigInt, image: Image)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -233,7 +243,7 @@ object Droplet {
   }
 
   def restore(id: BigInt, imageId: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> "restore") ~ ("image" -> imageId), "droplets", id.toString, "actions")
+    performAction(id, "restore", ("image" -> imageId))
   }
 
   def rebuild(id: BigInt, image: Image)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -241,15 +251,15 @@ object Droplet {
   }
 
   def rebuild(id: BigInt, imageId: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> "rebuild") ~ ("image" -> imageId), "droplets", id.toString, "actions")
+    performAction(id, "rebuild", ("image" -> imageId))
   }
 
   def rebuild(id: BigInt, imageSlug: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> "rebuild") ~ ("image" -> imageSlug), "droplets", id.toString, "actions")
+    performAction(id, "rebuid", ("image" -> imageSlug))
   }
 
   def rename(id: BigInt, name: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> "rename") ~ ("name" -> name), "droplets", id.toString, "actions")
+    performAction(id, "rename", ("name" -> name))
   }
 
   def changeKernel(id: BigInt, kernel: Kernel)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -257,7 +267,7 @@ object Droplet {
   }
 
   def changeKernel(id: BigInt, kernelId: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> "change_kernel") ~ ("kernel" -> kernelId), "droplets", id.toString, "actions")
+    performAction(id, "change_kernel", ("kernel" -> kernelId))
   }
 
   def enableIPv6(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -272,8 +282,8 @@ object Droplet {
     performAction(id, "enable_private_networking")
   }
 
-  def snapshot(id: BigInt, name: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    client.post[Action](("type" -> "snapshot") ~ ("name" -> name), "droplets", id.toString, "actions")
+  def snapshot(id: BigInt, name: Option[String] = None)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    performAction(id, "snapshot", ("name" -> name))
   }
 
   def create(
@@ -344,7 +354,7 @@ object Droplet {
     val requestJson = nonImageParts.merge(imagePart)
 
     for {
-      response <- client.post[responses.Droplet](requestJson, "droplets")
+      response <- client.post[responses.Droplet](requestJson, path: _*)
     } yield {
       response.droplet
     }

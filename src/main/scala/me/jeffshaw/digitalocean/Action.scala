@@ -15,20 +15,15 @@ case class Action(
   region: String
 )
 
-object Action {
+object Action extends Path with Listable[Action, responses.Actions] {
+  override val path = Seq("actions")
+
   def apply(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    val path = this.path :+ id.toString
     for {
-      response <- client.get[responses.Action]("action", id.toString())
+      response <- client.get[responses.Action](path: _*)
     } yield {
       response.action
-    }
-  }
-
-  def list(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Action]] = {
-    for {
-      response <- client.get[me.jeffshaw.digitalocean.responses.Actions]("action")
-    } yield {
-      response.actions
     }
   }
 
@@ -39,4 +34,5 @@ object Action {
   case object Image extends ResourceType
 
   case object Backend extends ResourceType
+
 }

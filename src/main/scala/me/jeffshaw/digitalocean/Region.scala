@@ -18,7 +18,12 @@ case class Region(
   }
 }
 
-object Region {
+object Region
+  extends Path
+  with Listable[Region, responses.Regions] {
+
+  override val path: Seq[String] = Seq("regions")
+
   /*
   /region/$slug isn't supported, so just get all of them and get the one we want from the list.
    */
@@ -26,19 +31,11 @@ object Region {
     for {
       response <- list
     } yield {
-      response.find(_.slug == slug).getOrElse(throw new NoSuchElementException())
+      response.find(_.slug == slug).getOrElse(throw new NoSuchElementException(slug))
     }
   }
 
   def apply(enum: RegionEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Region] = {
     apply(enum.slug)
-  }
-
-  def list(implicit client: DigitalOceanClient, ex: ExecutionContext): Future[Seq[Region]] = {
-    for {
-      response <- client.get[me.jeffshaw.digitalocean.responses.Regions]("regions")
-    } yield {
-      response.regions
-    }
   }
 }

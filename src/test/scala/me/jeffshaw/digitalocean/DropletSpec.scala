@@ -6,9 +6,9 @@ import scala.concurrent.duration._
 class DropletSpec extends Spec {
   test("Droplets can be listed")
   {
-    val droplets = Await.result(Droplet.list, 5 seconds)
+    val droplets = Await.result(Droplet.list(5 seconds), 5 seconds)
 
-    assert(droplets.size >= 0)
+    assert(droplets.hasNext)
   }
 
   def eventuallyFails[T](maxWait: Duration, f: => T): Boolean = {

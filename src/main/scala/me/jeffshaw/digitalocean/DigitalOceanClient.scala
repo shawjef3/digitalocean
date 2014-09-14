@@ -3,12 +3,19 @@ package me.jeffshaw.digitalocean
 import com.ning.http.client.Response
 import dispatch.Defaults._
 import dispatch._
-import org.json4s._
-import org.json4s.native._
+import org.json4s._, native._
 
-case class DigitalOceanClient(private val token: String) {
+import scala.concurrent.duration._
+
+case class DigitalOceanClient(private val token: String, maxWaitPerPage: Duration) {
   private val requestPrefix =
     DigitalOceanClient.host.addHeader("Authorization", "Bearer " + token)
+
+  //This needs to be used carefully, because it can potentially give
+  //the api key to a 3rd party.
+  private[digitalocean] def customRequest[T: Manifest](req: Req): Future[T] = {
+    parseResponse[T](Http(req.addHeader("Authorization", "Bearer " + token)))
+  }
 
   def setPath(pathElements: Seq[String]): Req = {
     pathElements.foldLeft(requestPrefix)((accum, pathElement) => accum / pathElement)
@@ -37,8 +44,7 @@ case class DigitalOceanClient(private val token: String) {
       if (statusCode < 300 &&
         response.getContentType == DigitalOceanClient.contentType
       ) {
-        val jsonBody = parseJson(responseBody).camelizeKeys
-        Extraction.extract[T](jsonBody)
+        parseJson(responseBody).camelizeKeys.extract[T]
       } else {
         throw DigitalOceanClientException(response)
       }

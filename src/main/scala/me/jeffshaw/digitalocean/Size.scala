@@ -21,7 +21,12 @@ case class Size(
   }
 }
 
-object Size {
+object Size
+  extends Path
+  with Listable[Size, responses.Sizes] {
+
+  override val path: Seq[String] = Seq("sizes")
+
   /*
   /size/$name isn't supported, so just get all of them and get the one we want from the list.
    */
@@ -29,15 +34,7 @@ object Size {
     for {
       sizes <- list
     } yield {
-      sizes.find(_.slug == slug).getOrElse(throw new NoSuchElementException())
-    }
-  }
-
-  def list(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Size]] = {
-    for {
-      sizes <- client.get[me.jeffshaw.digitalocean.responses.Sizes]("sizes")
-    } yield {
-      sizes.sizes
+      sizes.find(_.slug == slug).getOrElse(throw new NoSuchElementException(slug))
     }
   }
 }
