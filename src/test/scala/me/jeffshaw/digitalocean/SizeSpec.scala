@@ -27,6 +27,6 @@ class SizeSpec extends Spec {
   test("All sizes are explicitly enumerated.") {
     val sizes = getCache
 
-    assert(sizes.forall(s => ! s.asEnum.isInstanceOf[OtherSize]))
+    assert(sizes.forall(s => ! s.toEnum.isInstanceOf[OtherSize]))
   }
 }

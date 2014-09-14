@@ -13,7 +13,7 @@ case class Region(
     Future.sequence(sizes.map(Size.apply))
   }
 
-  def asEnum: RegionEnum = {
+  def toEnum: RegionEnum = {
     RegionEnum.fromSlug(this.slug)
   }
 }

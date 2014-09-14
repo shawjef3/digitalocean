@@ -27,6 +27,6 @@ class RegionSpec extends Spec {
   test("All regions are explicitly enumerated.") {
     val regions = getCache
 
-    assert(regions.forall(r => ! r.asEnum.isInstanceOf[OtherRegion]))
+    assert(regions.forall(r => ! r.toEnum.isInstanceOf[OtherRegion]))
   }
 }

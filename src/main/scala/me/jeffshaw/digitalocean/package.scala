@@ -14,15 +14,15 @@ package object digitalocean {
   }
 
   implicit def Region2RegionEnum(r: Region): RegionEnum = {
-    r.asEnum
+    r.toEnum
   }
 
   implicit def String2RegionEnum(slug: String): RegionEnum = {
     RegionEnum.fromSlug(slug)
   }
 
-  implicit def Size2SizeEnum(r: Size): SizeEnum = {
-    r.asEnum
+  implicit def Size2SizeEnum(size: Size): SizeEnum = {
+    size.toEnum
   }
 
   implicit def String2SizeEnum(slug: String): SizeEnum = {

@@ -16,7 +16,7 @@ case class Size(
     Future.sequence(regions.map(Region.apply))
   }
 
-  def asEnum: SizeEnum = {
+  def toEnum: SizeEnum = {
     SizeEnum.fromSlug(slug)
   }
 }
