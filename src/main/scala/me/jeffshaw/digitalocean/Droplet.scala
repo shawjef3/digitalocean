@@ -76,14 +76,6 @@ case class Droplet(
     Droplet.resize(id, size)
   }
 
-  def resize(size: Size)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    Droplet.resize(id, size)
-  }
-
-  def resize(sizeSlug: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    Droplet.resize(id, sizeSlug)
-  }
-
   def restore(image: Image)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     Droplet.restore(id, image)
   }
@@ -227,15 +219,7 @@ object Droplet
   }
 
   def resize(id: BigInt, size: SizeEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    resize(id, size.slug)
-  }
-
-  def resize(id: BigInt, size: Size)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    resize(id, size.slug)
-  }
-
-  def resize(id: BigInt, sizeSlug: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    performAction(id, "resize", ("size" -> sizeSlug))
+    performAction(id, "resize", ("size" -> size.slug))
   }
 
   def restore(id: BigInt, image: Image)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -289,7 +273,7 @@ object Droplet
   def create(
     name: String,
     region: RegionEnum,
-    size: Size,
+    size: SizeEnum,
     image: Image,
     sshKeys: Seq[SshKey],
     backups: Boolean,
@@ -297,7 +281,7 @@ object Droplet
     privateNetworking: Boolean,
     userData: Option[String]
   )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
-    create(name, region.slug, size.slug, image.id, sshKeys, backups, ipv6, privateNetworking, userData)
+    create(name, region, size, image.id, sshKeys, backups, ipv6, privateNetworking, userData)
   }
 
   def create(
