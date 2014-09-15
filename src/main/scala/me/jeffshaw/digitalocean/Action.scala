@@ -19,24 +19,14 @@ case class Action(
     status != Action.InProgress
   }
 
-  def await(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    Future {
-      forever.find {action =>
-        Thread.sleep(client.actionCheckInterval.toMillis)
-        action.isCompleted
-      }.get
+  def await(implicit client: DigitalOceanClient, ec: ExecutionContext): Action = {
+    def actionRefresh: Action = {
+      Thread.sleep(client.actionCheckInterval.toMillis)
+      Await.result(Action(id), client.maxWaitPerRequest)
     }
-  }
 
-  private def forever(implicit client: DigitalOceanClient, ec: ExecutionContext): Iterator[Action] = {
-    new Iterator[Action] {
-      override def hasNext: Boolean = true
-
-      override def next(): Action = {
-        Await.result[Action](Action(id), client.maxWaitPerRequest)
-      }
-    }
-  }
+    Iterator.continually(actionRefresh).find(_.isCompleted)
+  }.get
 }
 
 object Action extends Path with Listable[Action, responses.Actions] {
