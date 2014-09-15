@@ -3,6 +3,8 @@ digitalocean
 
 Scala wrapper around Digital Ocean's API, version 2
 
+Note that except some await member functions that are meant specifically for waiting for an action to complete or droplet to be created, this API is entirely asynchronous, so you'll want to know how to use Futures.
+
 Install SBT, clone this repository, and cd to it.
 
 
