@@ -23,6 +23,9 @@ class DropletSpec extends Spec {
 
     println(s"Droplet ${droplet.id} is active. Deleting it.")
 
+    //Power it off (not necessary, but we don't have a test for Action.await yet.
+    Await.result(droplet.powerOff, 5 seconds).await
+
     //Wait 5 seconds for the delete command to return, and then
     //wait for the droplet to stop existing.
     Await.result(droplet.delete, 5 seconds).await
