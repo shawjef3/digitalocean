@@ -5,7 +5,7 @@ import java.net.{Inet4Address, InetAddress}
 import org.json4s.CustomSerializer
 import org.json4s.JsonAST.JString
 
-case object Inet4AddressSerializer extends CustomSerializer[Inet4Address](format =>
+private[digitalocean] case object Inet4AddressSerializer extends CustomSerializer[Inet4Address](format =>
   (
     {
       case JString(ip) =>

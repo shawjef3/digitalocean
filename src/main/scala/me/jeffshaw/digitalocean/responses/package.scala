@@ -1,11 +1,36 @@
 package me.jeffshaw
 package digitalocean
 
+import scala.concurrent.{Future, ExecutionContext}
+
 package object responses {
 
-  private [digitalocean] sealed trait Page[T] {
-    def page: Seq[T]
+  private[digitalocean] case class Meta(total: BigInt)
 
+  private[digitalocean] case class Pages(
+    first: Option[String],
+    prev: Option[String],
+    next: Option[String],
+    last: Option[String]
+  )
+
+  private[digitalocean] case class ActionRef(
+    id: BigInt,
+    rel: String,
+    href: String
+  ) {
+    def action(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[digitalocean.Action] = {
+      digitalocean.Action(id)
+    }
+  }
+
+  private[digitalocean] case class Links(
+    pages: Option[Pages],
+    actions: Seq[ActionRef]
+  )
+
+  private[digitalocean] sealed trait Page[T] {
+    def page: Seq[T]
     val meta: Option[Meta]
     val links: Option[Links]
 

@@ -2,10 +2,9 @@ package me.jeffshaw.digitalocean
 
 import java.time.Instant
 
-import org.json4s.CustomSerializer
-import org.json4s.JsonAST.JString
+import org.json4s._
 
-case object InstantSerializer extends CustomSerializer[Instant](format =>
+private[digitalocean] case object InstantSerializer extends CustomSerializer[Instant](format =>
 	(
 		{
 			case JString(s) =>

@@ -1,5 +1,7 @@
 package me.jeffshaw.digitalocean
 
+import me.jeffshaw.digitalocean.responses.PagedResponse
+
 import scala.concurrent._
 
 trait Listable[T, P <: responses.Page[T]] {

@@ -1,7 +1,6 @@
 package me.jeffshaw.digitalocean
 
-import org.json4s.CustomSerializer
-import org.json4s.JsonAST.JString
+import org.json4s._
 
 sealed trait NetworkType
 
@@ -10,7 +9,7 @@ case object Public extends NetworkType
 case object Private extends NetworkType
 
 object NetworkType {
-  case object Serializer extends CustomSerializer[NetworkType](format =>
+  private[digitalocean] case object Serializer extends CustomSerializer[NetworkType](format =>
     (
       {
       case JString("public") =>

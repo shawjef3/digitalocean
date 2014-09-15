@@ -1,8 +1,9 @@
 package me.jeffshaw.digitalocean
+package responses
 
 import scala.concurrent._
 
-case class PagedResponse[T, P <: responses.Page[T]] (
+private[digitalocean] case class PagedResponse[T, P <: responses.Page[T]] (
   client: DigitalOceanClient,
   implicit val ec: ExecutionContext,
   current: P

@@ -2,7 +2,7 @@ package me.jeffshaw.digitalocean
 
 import org.json4s._
 
-case object ActionResourceTypeSerializer extends CustomSerializer[Action.ResourceType](format =>
+private[digitalocean] case object ActionResourceTypeSerializer extends CustomSerializer[Action.ResourceType](format =>
   (
     {
       case JString("droplet") =>

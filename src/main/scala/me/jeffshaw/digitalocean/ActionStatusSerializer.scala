@@ -1,9 +1,8 @@
 package me.jeffshaw.digitalocean
 
-import org.json4s.CustomSerializer
-import org.json4s.JsonAST.JString
+import org.json4s._
 
-case object ActionStatusSerializer extends CustomSerializer[Action.Status](format =>
+private[digitalocean] case object ActionStatusSerializer extends CustomSerializer[Action.Status](format =>
   (
     {
       case JString("in-progress") =>

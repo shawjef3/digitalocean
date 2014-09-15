@@ -2,10 +2,9 @@ package me.jeffshaw.digitalocean
 
 import java.net.{Inet6Address, InetAddress}
 
-import org.json4s.CustomSerializer
-import org.json4s.JsonAST.JString
+import org.json4s._
 
-case object Inet6AddressSerializer extends CustomSerializer[Inet6Address](format =>
+private[digitalocean] case object Inet6AddressSerializer extends CustomSerializer[Inet6Address](format =>
   (
     {
       case JString(ip) =>

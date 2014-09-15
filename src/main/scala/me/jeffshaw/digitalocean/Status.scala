@@ -14,7 +14,7 @@ case object Off extends Status
 case object Archive extends Status
 
 object Status {
-  case object Serializer extends CustomSerializer[Status](format =>
+  private[digitalocean] case object Serializer extends CustomSerializer[Status](format =>
     (
       {
         case JString("new") => New

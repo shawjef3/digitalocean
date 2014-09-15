@@ -1,5 +1,5 @@
 package me.jeffshaw.digitalocean
 
-trait Path {
-  val path: Seq[String]
+private[digitalocean] trait Path {
+  protected val path: Seq[String]
 }
