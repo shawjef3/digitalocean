@@ -3,7 +3,7 @@ package digitalocean
 
 package object responses {
 
-  sealed trait Page[T] {
+  private [digitalocean] sealed trait Page[T] {
     def page: Seq[T]
 
     val meta: Option[Meta]
@@ -14,12 +14,12 @@ package object responses {
     }
   }
 
-  case class Droplet(
+  private [digitalocean] case class Droplet(
     droplet: digitalocean.Droplet,
     links: Links
   )
 
-  case class Droplets(
+  private [digitalocean] case class Droplets(
     droplets: Seq[digitalocean.Droplet],
     meta: Option[Meta],
     links: Option[Links]
@@ -27,9 +27,9 @@ package object responses {
     override val page = droplets
   }
 
-  case class Action(action: digitalocean.Action)
+  private [digitalocean] case class Action(action: digitalocean.Action)
 
-  case class Actions(
+  private [digitalocean] case class Actions(
     actions: Seq[digitalocean.Action],
     meta: Option[Meta],
     links: Option[Links]
@@ -37,9 +37,9 @@ package object responses {
     override val page = actions
   }
 
-  case class Kernel(kernel: digitalocean.Kernel)
+  private [digitalocean] case class Kernel(kernel: digitalocean.Kernel)
 
-  case class Kernels(
+  private [digitalocean] case class Kernels(
     kernels: Seq[digitalocean.Kernel],
     meta: Option[Meta],
     links: Option[Links]
@@ -47,9 +47,9 @@ package object responses {
     override val page = kernels
   }
 
-  case class Snapshot(snapshot: digitalocean.Image)
+  private [digitalocean] case class Snapshot(snapshot: digitalocean.Image)
 
-  case class Snapshots(
+  private [digitalocean] case class Snapshots(
     snapshots: Seq[digitalocean.Image],
     meta: Option[Meta],
     links: Option[Links]
@@ -57,7 +57,7 @@ package object responses {
     override val page = snapshots
   }
 
-  case class Backups(
+  private [digitalocean] case class Backups(
     backups: Seq[digitalocean.Image],
     meta: Option[Meta],
     links: Option[Links]
@@ -65,9 +65,9 @@ package object responses {
     override val page = backups
   }
 
-  case class Image(image: digitalocean.Image)
+  private [digitalocean] case class Image(image: digitalocean.Image)
 
-  case class Images(
+  private [digitalocean] case class Images(
     images: Seq[digitalocean.Image],
     meta: Option[Meta],
     links: Option[Links]
@@ -75,9 +75,9 @@ package object responses {
     override val page = images
   }
 
-  case class Region(region: digitalocean.Region)
+  private [digitalocean] case class Region(region: digitalocean.Region)
 
-  case class Regions(
+  private [digitalocean] case class Regions(
     regions: Seq[digitalocean.Region],
     meta: Option[Meta],
     links: Option[Links]
@@ -85,9 +85,9 @@ package object responses {
     override val page = regions
   }
 
-  case class Size(size: digitalocean.Size)
+  private [digitalocean] case class Size(size: digitalocean.Size)
 
-  case class Sizes(
+  private [digitalocean] case class Sizes(
     sizes: Seq[digitalocean.Size],
     meta: Option[Meta],
     links: Option[Links]
