@@ -7,12 +7,27 @@ import org.json4s._, native._
 
 import scala.concurrent.duration._
 
-case class DigitalOceanClient(private val token: String, maxWaitPerPage: Duration) {
+/**
+ *
+ * @param token Your API token.
+ * @param maxWaitPerRequest The maximum amount of time the client should wait for a response before assuming the service is down.
+ * @param actionCheckInterval The amount of time to wait between checks for an action to complete.
+ */
+case class DigitalOceanClient(
+  private val token: String,
+  maxWaitPerRequest: Duration,
+  actionCheckInterval: Duration
+) {
   private val requestPrefix =
     DigitalOceanClient.host.addHeader("Authorization", "Bearer " + token)
 
-  //This needs to be used carefully, because it can potentially give
-  //the api key to a 3rd party.
+  /**
+   * This needs to be used carefully, because it can potentially give
+   * the api key to a 3rd party.
+   * @param req
+   * @tparam T
+   * @return
+   */
   private[digitalocean] def customRequest[T: Manifest](req: Req): Future[T] = {
     parseResponse[T](Http(req.addHeader("Authorization", "Bearer " + token)))
   }
@@ -56,9 +71,13 @@ case class DigitalOceanClient(private val token: String, maxWaitPerPage: Duratio
     parseResponse[T](request)
   }
 
-  def head[T: Manifest](path: String*): Future[T] = {
+  def exists(path: String*): Future[Boolean] = {
     val request = Http(setPath(path) HEAD)
-    parseResponse[T](request)
+    for {
+      response <- request
+    } yield {
+      response.getStatusCode != 404
+    }
   }
 
   def post[T: Manifest](message: JValue, path: String*): Future[T] = {

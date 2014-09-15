@@ -12,7 +12,7 @@ class ImageSpec extends Spec {
   }
 
   test("More than a page of images can be listed by the client.") {
-    val images = Await.result(Image.list(10 seconds), 1 minute)
+    val images = Await.result(Image.list, 1 minute)
 
     assert(images.size > 25)
   }

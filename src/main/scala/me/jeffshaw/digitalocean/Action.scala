@@ -2,18 +2,42 @@ package me.jeffshaw.digitalocean
 
 import java.time.Instant
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent._
 
 case class Action(
   id: BigInt,
-  status: String,
+  status: Action.Status,
   `type`: String,
   startedAt: Instant,
   completedAt: Option[Instant],
   resourceId: BigInt,
   resourceType: Action.ResourceType,
   region: String
-)
+) {
+
+  def isCompleted: Boolean = {
+    status != Action.InProgress
+  }
+
+  def await(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    Future {
+      forever.find {action =>
+        Thread.sleep(client.actionCheckInterval.toMillis)
+        action.isCompleted
+      }.get
+    }
+  }
+
+  private def forever(implicit client: DigitalOceanClient, ec: ExecutionContext): Iterator[Action] = {
+    new Iterator[Action] {
+      override def hasNext: Boolean = true
+
+      override def next(): Action = {
+        Await.result[Action](Action(id), client.maxWaitPerRequest)
+      }
+    }
+  }
+}
 
 object Action extends Path with Listable[Action, responses.Actions] {
   override val path = Seq("actions")
@@ -35,4 +59,11 @@ object Action extends Path with Listable[Action, responses.Actions] {
 
   case object Backend extends ResourceType
 
+  sealed trait Status
+
+  case object InProgress extends Status
+
+  case object Completed extends Status
+
+  case object Errored extends Status
 }

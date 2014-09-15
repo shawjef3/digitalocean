@@ -1,24 +1,24 @@
 package me.jeffshaw.digitalocean
 
-import scala.concurrent._, duration._
+import scala.concurrent._
 
 case class PagedResponse[T, P <: responses.Page[T]] (
   client: DigitalOceanClient,
   implicit val ec: ExecutionContext,
-  current: P,
-  maxWaitPerPage: Duration
+  current: P
 )(implicit mf: Manifest[P]) extends Iterable[T] {
 
   private def next: Option[Future[PagedResponse[T, P]]] = {
     for {
       links <- current.links
-      nextPageUrl <- links.pages.next
+      pages <- links.pages
+      nextPageUrl <- pages.next
     } yield {
         val nextPageRequest = dispatch.url(nextPageUrl).GET
         for {
           response <- client.customRequest[P](nextPageRequest)
         } yield {
-          PagedResponse[T, P](client, ec, response, maxWaitPerPage)
+          PagedResponse[T, P](client, ec, response)
         }
     }
   }
@@ -29,7 +29,7 @@ case class PagedResponse[T, P <: responses.Page[T]] (
 
   override def iterator: Iterator[T] = {
     def nextIterator = {
-      next.map(f => Await.result(f, maxWaitPerPage).iterator).
+      next.map(f => Await.result(f, client.maxWaitPerRequest).iterator).
         getOrElse(Iterator.empty)
     }
 

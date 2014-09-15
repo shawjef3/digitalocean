@@ -1,6 +1,6 @@
 package me.jeffshaw.digitalocean
 
-import scala.concurrent._, duration._
+import scala.concurrent._
 
 case class DigitalOcean(
   droplets: Iterator[Droplet],
@@ -11,15 +11,11 @@ case class DigitalOcean(
 
 object DigitalOcean {
   def list(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DigitalOcean] = {
-    list(client.maxWaitPerPage)
-  }
-
-  def list(maxWaitPerPage: Duration)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DigitalOcean] = {
     for {
-      droplets <- Droplet.list(maxWaitPerPage: Duration)
-      images <- Image.list(maxWaitPerPage: Duration)
-      regions <- Region.list(maxWaitPerPage: Duration)
-      sizes <- Size.list(maxWaitPerPage: Duration)
+      droplets <- Droplet.list
+      images <- Image.list
+      regions <- Region.list
+      sizes <- Size.list
     } yield {
       DigitalOcean(droplets, images, regions, sizes)
     }

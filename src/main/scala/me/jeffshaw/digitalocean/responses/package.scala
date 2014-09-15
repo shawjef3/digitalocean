@@ -5,6 +5,7 @@ package object responses {
 
   sealed trait Page[T] {
     def page: Seq[T]
+
     val meta: Option[Meta]
     val links: Option[Links]
 
@@ -13,7 +14,10 @@ package object responses {
     }
   }
 
-  case class Droplet(droplet: digitalocean.Droplet)
+  case class Droplet(
+    droplet: digitalocean.Droplet,
+    links: Links
+  )
 
   case class Droplets(
     droplets: Seq[digitalocean.Droplet],

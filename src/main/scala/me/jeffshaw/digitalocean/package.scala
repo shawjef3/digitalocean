@@ -1,6 +1,11 @@
 package me.jeffshaw
 
+import java.time.Instant
+
 import org.json4s._
+
+import scala.annotation.tailrec
+import scala.concurrent._, duration._
 
 package object digitalocean {
   implicit val formats = {
@@ -10,7 +15,8 @@ package object digitalocean {
       Status.Serializer +
       Inet4AddressSerializer +
       Inet6AddressSerializer +
-      ResourceTypeSerializer
+      ActionResourceTypeSerializer +
+      ActionStatusSerializer
   }
 
   implicit def Region2RegionEnum(r: Region): RegionEnum = {
@@ -27,5 +33,26 @@ package object digitalocean {
 
   implicit def String2SizeEnum(slug: String): SizeEnum = {
     SizeEnum.fromSlug(slug)
+  }
+
+  implicit class AwaitActions(actions: Iterable[Action]) {
+    def await(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterable[Action]] = {
+      Future.sequence(actions.map(_.await))
+    }
+  }
+
+  implicit class AwaitActionFutures(actions: Iterable[Future[Action]]) {
+    def await(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterable[Action]] = {
+      for {
+        actions <- Future.sequence(actions)
+        completedActions <- actions.await
+      } yield {
+        completedActions
+      }
+    }
+  }
+
+  implicit def Droplet2Creation(dropletCreation: DropletCreation): Droplet = {
+    dropletCreation.droplet
   }
 }

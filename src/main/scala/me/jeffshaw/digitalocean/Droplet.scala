@@ -24,6 +24,11 @@ case class Droplet(
   snapshotIds: Seq[BigInt],
   features: Seq[String]
 ) {
+
+  def exists(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+    Droplet.exists(id)
+  }
+
   def kernels(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Kernel]] = {
     Droplet.kernels(id)
   }
@@ -40,8 +45,12 @@ case class Droplet(
     Droplet.actions(id)
   }
 
-  def delete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
+  def delete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DropletDeletion] = {
     Droplet.delete(id)
+  }
+
+  def isDeleted(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+    Droplet.isDeleted(id)
   }
 
   def reboot(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -145,9 +154,24 @@ object Droplet
     }
   }
 
-  def delete(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
+  def exists(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
     val path = self.path :+ id.toString
-    client.delete(path: _*)
+    client.exists(path: _*)
+  }
+
+  def isDeleted(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+    for {
+      exists <- exists(id)
+    } yield {! exists}
+  }
+
+  def delete(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DropletDeletion] = {
+    val path = self.path :+ id.toString
+    for {
+     _ <- client.delete(path: _*)
+    } yield {
+      DropletDeletion(id)
+    }
   }
 
   def kernels(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Kernel]] = {
@@ -168,8 +192,7 @@ object Droplet
     }.list
   }
 
-  def action(id: BigInt, actionId: BigInt)
-      (implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+  def action(id: BigInt, actionId: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     val path = self.path ++ Seq(id.toString, "actions", actionId.toString)
     for {
       response <- client.get[responses.Action](path: _*)
@@ -280,7 +303,7 @@ object Droplet
     ipv6: Boolean,
     privateNetworking: Boolean,
     userData: Option[String]
-  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
+  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DropletCreation] = {
     create(name, region, size, image.id, sshKeys, backups, ipv6, privateNetworking, userData)
   }
 
@@ -294,7 +317,7 @@ object Droplet
     ipv6: Boolean,
     privateNetworking: Boolean,
     userData: Option[String]
-  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
+  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DropletCreation] = {
     val imagePart = "image" -> image
     createAux(name, region, size, imagePart, sshKeys, backups, ipv6, privateNetworking, userData)
   }
@@ -309,7 +332,7 @@ object Droplet
     ipv6: Boolean,
     privateNetworking: Boolean,
     userData: Option[String]
-  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
+  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DropletCreation] = {
     val imagePart = "image" -> image
     createAux(name, region, size, imagePart, sshKeys, backups, ipv6, privateNetworking, userData)
   }
@@ -324,7 +347,7 @@ object Droplet
     ipv6: Boolean,
     privateNetworking: Boolean,
     userData: Option[String]
-  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
+  )(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DropletCreation] = {
     val nonImageParts =
       ("name" -> name) ~
         ("region" -> region.slug) ~
@@ -340,7 +363,7 @@ object Droplet
     for {
       response <- client.post[responses.Droplet](requestJson, path: _*)
     } yield {
-      response.droplet
+      DropletCreation(response.droplet, response.links.actions.head.id)
     }
   }
 }

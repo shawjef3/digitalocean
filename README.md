@@ -10,11 +10,12 @@ Install SBT, clone this repository, and cd to it.
 sbt
 
 console
-//use :paste if you want to copy-paste the following.
+//use :paste if you want to copy-paste the following, but be sure to set your api token first.
 
 import scala.concurrent._, duration._, ExecutionContext.Implicits._
 import me.jeffshaw.digitalocean._
-implicit val client = DigitalOceanClient("api_token")
+
+implicit val client = DigitalOceanClient("api token")
 
 //List all the regions.
 Await.result(Region.list, 5 seconds)
@@ -22,16 +23,14 @@ Await.result(Region.list, 5 seconds)
 //Create a small CentOS 6.5 32-bit droplet.
 val droplet = Await.result(Droplet.create("test", NewYork2, `512mb`, 3448674, Seq.empty, false, false, false, None), 10 seconds)
 
-//Destroy it after it becomes active.
-while (Await.result(Droplet(droplet.id), 10 seconds).status != Active) {
-    println(s"waiting for status = active for droplet ${droplet.id}")
-    Thread.sleep(5 * 1000)
-}
+//Wait for the droplet to become active.
+droplet.await
 
-//Wait a few seconds, or else the delete will probably fail.
-Thread.sleep(10 * 1000)
+//Do stuff with the droplet.
 
-Await.result(droplet.delete, 10 seconds)
+//Run the delete the command, and then wait for the droplet to stop existing.
+
+Await.result(droplet.delete, 5 seconds).await
 
 //CTRL-D if you used :paste.
 ```

@@ -1,9 +1,8 @@
 package me.jeffshaw.digitalocean
 
-import org.json4s.CustomSerializer
-import org.json4s.JsonAST.JString
+import org.json4s._
 
-case object ResourceTypeSerializer extends CustomSerializer[Action.ResourceType](format =>
+case object ActionResourceTypeSerializer extends CustomSerializer[Action.ResourceType](format =>
   (
     {
       case JString("droplet") =>
