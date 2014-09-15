@@ -1,4 +1,7 @@
-src/test/resources/application.conf
+#Using gitignore for the following file doesn't work.
+#Instead, use git update-index --assume-unchanged src/test/resources/application.conf
+#Reference: https://help.github.com/articles/ignoring-files#ignoring-versioned-files
+#src/test/resources/application.conf
 
 #https://raw.githubusercontent.com/github/gitignore/master/Scala.gitignore
 *.class
