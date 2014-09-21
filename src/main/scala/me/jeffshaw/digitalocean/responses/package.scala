@@ -39,6 +39,30 @@ package object responses {
     }
   }
 
+  private [digitalocean] case class Domains(
+    domains: Seq[digitalocean.Domain],
+    meta: Option[Meta],
+    links: Option[Links]
+  ) extends Page[digitalocean.Domain] {
+    override def page: Seq[digitalocean.Domain] = domains
+  }
+
+  private [digitalocean] case class Domain(
+    domain: digitalocean.Domain
+  )
+
+  private [digitalocean] case class DomainRecord(
+    domainRecord: DomainRecordFields
+  )
+
+  private [digitalocean] case class DomainRecords(
+    domainRecords: Seq[DomainRecordFields],
+    meta: Option[Meta],
+    links: Option[Links]
+  ) extends Page[DomainRecordFields] {
+    override val page = domainRecords
+  }
+
   private [digitalocean] case class Droplet(
     droplet: digitalocean.Droplet,
     links: Links

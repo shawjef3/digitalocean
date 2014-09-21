@@ -19,14 +19,22 @@ case class Action(
     status != Action.InProgress
   }
 
-  def await(implicit client: DigitalOceanClient, ec: ExecutionContext): Action = {
+  def complete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     def actionRefresh: Action = {
       Thread.sleep(client.actionCheckInterval.toMillis)
       Await.result(Action(id), client.maxWaitPerRequest)
     }
 
-    Iterator.continually(actionRefresh).find(_.isCompleted)
-  }.get
+    val completedAction = Iterator.continually(actionRefresh).find(_.isCompleted).get
+
+    Future {
+      if (completedAction.status == Action.Errored) {
+        throw new ActionErroredException(completedAction)
+      } else {
+        completedAction
+      }
+    }
+  }
 }
 
 object Action extends Path with Listable[Action, responses.Actions] {

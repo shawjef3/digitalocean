@@ -8,12 +8,12 @@ import scala.concurrent._
  * @param dropletId
  */
 case class DropletDeletion(dropletId: BigInt) {
-  def await(implicit client: DigitalOceanClient, ec: ExecutionContext): Unit = {
+  def complete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
     def existenceCheck: Boolean = {
       Thread.sleep(client.actionCheckInterval.toMillis)
       Await.result(Droplet.isDeleted(dropletId), client.actionCheckInterval)
     }
 
-    Iterator.continually(existenceCheck).contains(true)
+    Future(Iterator.continually(existenceCheck).contains(true))
   }
 }

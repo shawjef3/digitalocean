@@ -8,7 +8,11 @@ import scala.concurrent._, duration._
 class Spec extends FunSuite with Matchers {
   val config = ConfigFactory.load()
 
-  implicit val client = DigitalOceanClient(config.getString("digital_ocean_api_token"), 5 seconds, 30 seconds)
+  implicit val client = DigitalOceanClient(
+    token = config.getString("digital_ocean_api_token"),
+    maxWaitPerRequest = 5 seconds,
+    actionCheckInterval = 10 seconds
+  )
 
   implicit val ec = ExecutionContext.global
 }

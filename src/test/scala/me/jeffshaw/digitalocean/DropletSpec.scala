@@ -19,16 +19,16 @@ class DropletSpec extends Spec {
       Await.result(Droplet.create(name, region, size, image, Seq.empty, false, false, false, None), 10 seconds)
 
     //Wait for the droplet to be ready for use.
-    droplet.await
+    Await.result(droplet.complete, 2 minutes)
 
     println(s"Droplet ${droplet.id} is active. Deleting it.")
 
     //Power it off (not necessary, but we don't have a test for Action.await yet.
-    Await.result(droplet.powerOff, 5 seconds).await
+    Await.result(droplet.powerOff.flatMap(_.complete), 1 minute)
 
     //Wait 5 seconds for the delete command to return, and then
     //wait for the droplet to stop existing.
-    Await.result(droplet.delete, 5 seconds).await
+    Await.result(droplet.delete.flatMap(_.complete), 1 minute)
 
     println("deletion completed")
   }
