@@ -20,24 +20,24 @@ private[digitalocean] case class DomainRecordFields(
     }
   }
 
-  def toDomainRecord(domainName: String): digitalocean.DomainRecord = {
+  def toDomainRecord(domainName: String): dns.DomainRecord = {
     `type` match {
       case "A" =>
         val address = inetAddress.get.asInstanceOf[Inet4Address]
-        A(domainName, id, name.get, address)
+        dns.A(domainName, id, name.get, address)
       case "AAAA" =>
         val address = inetAddress.get.asInstanceOf[Inet6Address]
-        AAAA(domainName, id, name.get, address)
+        dns.AAAA(domainName, id, name.get, address)
       case "CNAME" =>
-        CNAME(domainName, id, name.get, data.get)
+        dns.CNAME(domainName, id, name.get, data.get)
       case "MX" =>
-        MX(domainName, id, data.get, priority.get)
+        dns.MX(domainName, id, data.get, priority.get)
       case "TXT" =>
-        TXT(domainName, id, name.get, data.get)
+        dns.TXT(domainName, id, name.get, data.get)
       case "SRV" =>
-        SRV(domainName, id, name.get, inetAddress.get, priority.get, weight.get)
+        dns.SRV(domainName, id, name.get, inetAddress.get, priority.get, weight.get)
       case "NS" =>
-        NS(domainName, id, data.get)
+        dns.NS(domainName, id, data.get)
     }
   }
 }

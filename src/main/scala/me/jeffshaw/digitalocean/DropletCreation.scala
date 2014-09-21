@@ -10,6 +10,12 @@ case class DropletCreation(
     Action(actionId)
   }
 
+  /**
+   * Gets the creation action and calls .complete on it, so that the completed action is returned.
+   * @param client
+   * @param ec
+   * @return
+   */
   def complete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     for {
       a <- action

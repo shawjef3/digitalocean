@@ -19,6 +19,14 @@ case class Action(
     status != Action.InProgress
   }
 
+  /**
+   * Polls the action for a completed or errored status, returning the final action value.
+   * You can use Future.onError to set a callback if the final state is Errored, or
+   * onSuccess if the final status is Completed.
+   * @param client
+   * @param ec
+   * @return
+   */
   def complete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     def actionRefresh: Action = {
       Thread.sleep(client.actionCheckInterval.toMillis)

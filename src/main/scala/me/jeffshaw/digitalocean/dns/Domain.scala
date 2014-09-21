@@ -1,12 +1,13 @@
-package me.jeffshaw.digitalocean
+package me.jeffshaw.digitalocean.dns
 
 import java.net._
 
+import me.jeffshaw.digitalocean._
 import me.jeffshaw.digitalocean.responses.PagedResponse
 import org.json4s.Extraction
 import org.json4s.JsonDSL._
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 
 case class Domain(
   name: String,

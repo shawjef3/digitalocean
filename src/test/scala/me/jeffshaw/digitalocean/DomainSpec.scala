@@ -1,5 +1,7 @@
 package me.jeffshaw.digitalocean
 
+import me.jeffshaw.digitalocean.dns.Domain
+
 import concurrent._, duration._
 import scala.util.Random
 

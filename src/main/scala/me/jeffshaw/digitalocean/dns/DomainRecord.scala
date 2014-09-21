@@ -1,8 +1,10 @@
 package me.jeffshaw.digitalocean
+package dns
 
 import java.net._
 
-import org.json4s._, JsonDSL._
+import org.json4s.JsonDSL._
+import org.json4s._
 
 import scala.concurrent._
 

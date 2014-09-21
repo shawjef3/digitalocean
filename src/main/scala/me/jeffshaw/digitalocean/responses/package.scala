@@ -40,15 +40,15 @@ package object responses {
   }
 
   private [digitalocean] case class Domains(
-    domains: Seq[digitalocean.Domain],
+    domains: Seq[dns.Domain],
     meta: Option[Meta],
     links: Option[Links]
-  ) extends Page[digitalocean.Domain] {
-    override def page: Seq[digitalocean.Domain] = domains
+  ) extends Page[dns.Domain] {
+    override def page: Seq[dns.Domain] = domains
   }
 
   private [digitalocean] case class Domain(
-    domain: digitalocean.Domain
+    domain: dns.Domain
   )
 
   private [digitalocean] case class DomainRecord(
