@@ -3,7 +3,11 @@ digitalocean
 
 Scala wrapper around Digital Ocean's API, version 2
 
-Note that except some member functions named "await" that are meant specifically for waiting for an action to complete or droplet to be created, this API is entirely asynchronous, so you'll want to know how to use Futures.
+This API is entirely asynchronous, so you'll want to know how to use Futures. Some classes have a "complete" method that
+perform several operations for you so that you can know if an operation such as Droplet.create or an action have
+completed. "complete" methods are also futures.
+
+##Instructions
 
 Install SBT, clone this repository, and cd to it.
 
@@ -20,6 +24,7 @@ import me.jeffshaw.digitalocean._
 implicit val client = DigitalOceanClient(
   token = "",
   maxWaitPerRequest = 5 seconds,
+  //The following is used for polling action completion.
   actionCheckInterval = 15 seconds
 )
 
