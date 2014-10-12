@@ -9,8 +9,27 @@ completed. "complete" methods are also futures.
 
 ##Instructions
 
-Install SBT, clone this repository, and cd to it.
+###Dependency
 
+This project is now in Maven Central for Scala 2.10 and 2.11. You can add it to your dependencies in your project's sbt file.
+
+```scala
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "0.5"
+```
+
+Or, for a maven project:
+
+```xml
+<dependency>
+  <groupId>me.jeffshaw</groupId>
+  <artifactId>digitalocean_2.11</artifactId>
+  <version>0.5</version>
+</dependency>
+```
+
+###Local Compilation
+
+Install SBT, clone this repository, and cd to it.
 
 ```scala
 sbt
@@ -32,7 +51,21 @@ implicit val client = DigitalOceanClient(
 val regions = Await.result(Region.list, 5 seconds)
 
 //Create a small CentOS 6.5 32-bit droplet.
-val droplet = Await.result(Droplet.create("test", NewYork2, `512mb`, 3448674, Seq.empty, false, false, false, None), 10 seconds)
+val droplet =
+  Await.result(
+    Droplet.create(
+      name = "test",
+      region = NewYork2,
+      size = `512mb`,
+      image = 3448674,
+      sshKeys = Seq.empty,
+      backups = false,
+      ipv6 = false,
+      privateNetworking = false,
+      userData = None
+    ),
+    atMost = 10 seconds
+  )
 
 //Wait for the droplet to become active.
 Await.result(droplet.complete, 2 minutes)
