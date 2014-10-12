@@ -16,3 +16,36 @@ libraryDependencies ++= Seq(
 )
 
 scalaVersion := "2.11.2"
+
+crossScalaVersions := Seq("2.10.4")
+
+publishMavenStyle := true
+
+publishTo := {
+  val nexus = "http://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+}
+
+licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+
+homepage := Some(url("https://github.com/shawjef3/digitalocean"))
+
+pomExtra := (
+  <developers>
+    <developer>
+      <name>Jeff Shaw</name>
+      <id>shawjef3</id>
+    </developer>
+  </developers>
+  <scm>
+    <url>git@github.com:shawjef3/digitalocean.git</url>
+    <connection>scm:git:git@github.com:shawjef3/digitalocean.git</connection>
+  </scm>
+)
+
+pomIncludeRepository := { _ => false }
+
+xerial.sbt.Sonatype.sonatypeSettings
