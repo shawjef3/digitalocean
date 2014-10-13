@@ -7,6 +7,10 @@ This API is entirely asynchronous, so you'll want to know how to use Futures. So
 perform several operations for you so that you can know if an operation such as Droplet.create or an action have
 completed. "complete" methods are also futures.
 
+##Scaladoc
+
+http://www.jeffshaw.me/digitalocean/
+
 ##Instructions
 
 ###Dependency
