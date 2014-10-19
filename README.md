@@ -83,8 +83,11 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ##Changelog
 
-0.5
+### 0.6
+Metadata functionality added to the metadata package.
+
+### 0.5
 DNS functionality added to the dns package.
 
-0.2
+### 0.2
 List functions now return iterators that support paged responses.
