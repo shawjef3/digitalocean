@@ -11,9 +11,13 @@ class ImageSpec extends Spec {
     assert(images.hasNext)
   }
 
+  //By default, the page size is 25,so try and list more images than that.
+  //source: https://developers.digitalocean.com/documentation/v2/#links
   test("More than a page of images can be listed by the client.") {
-    val images = Await.result(Image.list, 1 minute)
+    val images = Await.result(Image.list, 20 seconds)
 
-    assert(images.size > 25)
+    val imagesPrefix = images.take(26)
+
+    assert(imagesPrefix.size > 25)
   }
 }
