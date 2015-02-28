@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class Domain(
   name: String,
-  ttl: Int,
+  ttl: Option[Int],
   zoneFile: Option[String]
 ) extends Path {
 
