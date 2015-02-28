@@ -6,7 +6,7 @@ case class Region(
   slug: String,
   name: String,
   sizes: Seq[String],
-  available: Boolean,
+  available: Option[Boolean],
   features: Seq[String]
 ) {
   def getSizes(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Size]] = {

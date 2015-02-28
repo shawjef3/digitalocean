@@ -63,6 +63,28 @@ package object responses {
     override val page = domainRecords
   }
 
+  //Digital ocean is providing more limited information
+  //about a droplet on creation, so just read the id.
+  private [digitalocean] case class DropletCreation(
+    droplet: Id,
+    links: Links
+  ) {
+    def toDropletCreation(implicit client: digitalocean.DigitalOceanClient, ec: ExecutionContext): Future[digitalocean.DropletCreation] = {
+      for {
+        droplet <- digitalocean.Droplet(droplet.id)
+      } yield {
+        digitalocean.DropletCreation(
+          droplet,
+          links.actions.head.id
+        )
+      }
+    }
+  }
+
+  private [digitalocean] case class Id(
+    id: BigInt
+  )
+
   private [digitalocean] case class Droplet(
     droplet: digitalocean.Droplet,
     links: Links

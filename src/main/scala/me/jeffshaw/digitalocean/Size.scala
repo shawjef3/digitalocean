@@ -7,7 +7,7 @@ case class Size(
   memory: Option[BigInt],
   vcpus: Option[BigInt],
   disk: Option[BigInt],
-  transfer: BigInt,
+  transfer: BigDecimal,
   priceMonthly: BigDecimal,
   priceHourly: BigDecimal,
   regions: Seq[String]

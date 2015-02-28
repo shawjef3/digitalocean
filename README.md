@@ -87,6 +87,11 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ##Changelog
 
+### 0.7
+Droplet creation has changed to return less information about the droplet.
+My solution is to just read the ID, and then ask for all the information
+in a second request.
+
 ### 0.6
 Metadata functionality added to the metadata package.
 

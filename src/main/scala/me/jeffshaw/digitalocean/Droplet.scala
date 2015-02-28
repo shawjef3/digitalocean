@@ -361,9 +361,10 @@ object Droplet
     val requestJson = nonImageParts.merge(imagePart)
 
     for {
-      response <- client.post[responses.Droplet](requestJson, path: _*)
+      response <- client.post[responses.DropletCreation](requestJson, path: _*)
+      droplet <- response.toDropletCreation
     } yield {
-      DropletCreation(response.droplet, response.links.actions.head.id)
+      droplet
     }
   }
 }
