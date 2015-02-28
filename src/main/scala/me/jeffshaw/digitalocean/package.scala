@@ -3,7 +3,7 @@ package me.jeffshaw
 import org.json4s._
 
 package object digitalocean {
-  implicit val formats = {
+  private [digitalocean] implicit val formats = {
     DefaultFormats.withBigDecimal +
       InstantSerializer +
       NetworkType.Serializer +
