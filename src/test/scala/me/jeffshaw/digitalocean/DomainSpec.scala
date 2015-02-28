@@ -1,27 +1,27 @@
 package me.jeffshaw.digitalocean
 
 import me.jeffshaw.digitalocean.dns.Domain
+import org.scalatest.BeforeAndAfterAll
 
 import concurrent._, duration._
 import scala.util.Random
 
-class DomainSpec extends Spec {
+class DomainSpec extends Spec with BeforeAndAfterAll {
+
+  val domainName = "test" + Random.nextInt() + ".com"
 
   test("Domains can be created, listed, and deleted") {
-
-    val domainName = "test" + Random.nextInt() + ".com"
 
     val domain = Await.result(Domain.create(domainName, "10.0.0.1"), 30 seconds)
 
     val domains = Await.result(Domain.list, 10 seconds)
-
-    assert(domains.size > 0)
+    
+    assert(domains.exists(_.name == domainName))
 
     Await.result(domain.delete, 10 seconds)
   }
 
   test("Domains can have records added, listed and deleted") {
-    val domainName = "test" + Random.nextInt() + ".com"
 
     val domain = Await.result(Domain.create(domainName, "10.0.0.1"), 30 seconds)
 
@@ -40,4 +40,7 @@ class DomainSpec extends Spec {
     Await.result(domain.delete, 10 seconds)
   }
 
+  override protected def afterAll(): Unit = {
+    scala.util.Try(Domain.delete(domainName))
+  }
 }
