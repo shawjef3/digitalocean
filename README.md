@@ -18,7 +18,7 @@ http://www.jeffshaw.me/digitalocean/
 This project is now in Maven Central for Scala 2.10 and 2.11. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "0.6"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "0.7"
 ```
 
 Or, for a maven project:
@@ -27,7 +27,7 @@ Or, for a maven project:
 <dependency>
   <groupId>me.jeffshaw</groupId>
   <artifactId>digitalocean_2.11</artifactId>
-  <version>0.6</version>
+  <version>0.7</version>
 </dependency>
 ```
 
