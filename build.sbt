@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
 	"org.scalatest" %% "scalatest" % "2.2.4" % "test"
 )
 
-scalaVersion := "2.11.5 "
+scalaVersion := "2.11.5"
 
 crossScalaVersions := Seq("2.10.4")
 
