@@ -5,7 +5,7 @@ import java.security.interfaces.RSAPublicKey
 import java.security.KeyPairGenerator
 import java.util.Base64
 
-import org.scalatest.{BeforeAndAfterEach, BeforeAndAfterAll}
+import org.scalatest.BeforeAndAfterAll
 
 import scala.concurrent._, duration._
 import scala.util.Random
@@ -16,7 +16,7 @@ import scala.util.Random
  * reason for all the calls to Thread.sleep(int).
  * Sometimes even a 30 second wait isn't enough.
  */
-class SshKeySpec extends Spec with BeforeAndAfterAll with BeforeAndAfterEach {
+class SshKeySpec extends Spec with BeforeAndAfterAll {
   private def genPK = {
     val kpg = KeyPairGenerator.getInstance("RSA")
     kpg.initialize(512)
@@ -40,88 +40,81 @@ class SshKeySpec extends Spec with BeforeAndAfterAll with BeforeAndAfterEach {
 
   private val publicKey: String = genPK
 
-  override protected def afterEach(): Unit = {
+  override protected def afterAll(): Unit = {
     val cleanup = for {
       keys <- SshKey.list
       deletions <- Future.sequence(keys.filter(_.name.startsWith(namePrefix)).map(_.delete))
     } yield deletions
 
-    Await.ready(cleanup, 10 seconds)
+    Await.result(cleanup, 10 seconds)
   }
 
   test("(randomly fails)Ssh keys can be created, renamed, listed, and deleted (by Id).") {
     val name = namePrefix + Random.nextInt()
-    val updatedName = namePrefix + "Updated" + Random.nextInt()
+    val updatedName = name + "Updated"
 
-    val key = Await.result(SshKey.create(name, publicKey), 10 seconds)
+    val t = for {
+      key <- SshKey.create(name, publicKey)
+      () = Thread.sleep(10000)
+      keys <- SshKey.list
+      () = assert(keys.contains(key))
+      newKey <- SshKey.setNameById(key.id, updatedName)
+      () = Thread.sleep(60000)
+      keysWithRename <- SshKey.list
+      () = assert(keysWithRename.contains(newKey))
+      () = assert(!keysWithRename.contains(key))
+      () = assert(keysCompare(key, newKey))
+      () <- SshKey.deleteById(key.id)
+      keysAfterDelete <- SshKey.list
+      () = assert(!keysAfterDelete.contains(newKey))
+    } yield ()
 
-    var keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(keys.contains(key))
-
-    val newKey = Await.result(SshKey.setNameById(key.id, updatedName), 10 seconds)
-
-    //Give Digital Ocean some time to catch up
-    Thread.sleep(10000)
-
-    keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(keys.contains(newKey))
-    assert(!keys.contains(key))
-
-    assert(keysCompare(key, newKey))
-
-    Await.result(SshKey.deleteById(key.id), 10 seconds)
-
-    keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(!keys.contains(newKey))
+    Await.result(t, 2 minutes)
   }
 
   test("(randomly fails)Ssh keys can be created, renamed, listed, and deleted (by fingerprint).") {
     val name = namePrefix + Random.nextInt()
-    val updatedName = namePrefix + "Updated" + Random.nextInt()
+    val updatedName = name + "Updated"
 
-    val key = Await.result(SshKey.create(name, publicKey), 10 seconds)
-    var keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(keys.contains(key))
+    val t = for {
+      key <- SshKey.create(name, publicKey)
+      () = Thread.sleep(10000)
+      keys <- SshKey.list
+      () = assert(keys.contains(key))
+      newKey <- SshKey.setNameByFingerprint(key.fingerprint, updatedName)
+      () = Thread.sleep(60000)
+      keysWithRename <- SshKey.list
+      () = assert(keysWithRename.contains(newKey))
+      () = assert(!keysWithRename.contains(key))
+      () = assert(keysCompare(key, newKey))
+      () <- SshKey.deleteById(key.id)
+      keysAfterDelete <- SshKey.list
+      () = assert(!keysAfterDelete.contains(newKey))
+    } yield ()
 
-    val newKey = Await.result(SshKey.setNameByFingerprint(key.fingerprint, updatedName), 10 seconds)
-
-    //Give Digital Ocean some time to catch up
-    Thread.sleep(10000)
-
-    keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(keys.contains(newKey))
-    assert(!keys.contains(key))
-
-    assert(keysCompare(key, newKey))
-
-    Await.result(SshKey.deleteByFingerprint(key.fingerprint), 10 seconds)
-
-    keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(!keys.contains(newKey))
+    Await.result(t, 2 minutes)
   }
 
   test("(randomly fails)Ssh keys can be created, renamed, and deleted (native).") {
     val name = namePrefix + Random.nextInt()
-    val updatedName = namePrefix + "Updated" + Random.nextInt()
+    val updatedName = name + "Updated"
 
-    val key = Await.result(SshKey.create(name, publicKey), 10 seconds)
-    var keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(keys.contains(key))
+    val t = for {
+      key <- SshKey.create(name, publicKey)
+      () = Thread.sleep(10000)
+      keys <- SshKey.list
+      () = assert(keys.contains(key))
+      newKey <- key.setName(updatedName)
+      () = Thread.sleep(60000)
+      keysWithRename <- SshKey.list
+      () = assert(keysWithRename.contains(newKey))
+      () = assert(!keysWithRename.contains(key))
+      () = assert(keysCompare(key, newKey))
+      () <- SshKey.deleteById(key.id)
+      keysAfterDelete <- SshKey.list
+      () = assert(!keysAfterDelete.contains(newKey))
+    } yield ()
 
-    val newKey = Await.result(key.setName(updatedName), 10 seconds)
-
-    //Give Digital Ocean some time to catch up
-    Thread.sleep(10000)
-
-    keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(keys.contains(newKey))
-    assert(!keys.contains(key))
-
-    assert(keysCompare(key, newKey))
-
-    Await.result(newKey.delete, 10 seconds)
-
-    keys = Await.result(SshKey.list, 10 seconds).toSeq
-    assert(!keys.contains(newKey))
+    Await.result(t, 2 minutes)
   }
 }

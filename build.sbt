@@ -6,7 +6,7 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "0.7"
+version := "0.8"
 
 libraryDependencies ++= Seq(
 	"net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
 
 scalaVersion := "2.11.5"
 
-crossScalaVersions := Seq("2.10.4")
+crossScalaVersions := Seq("2.10.5")
 
 publishMavenStyle := true
 
@@ -38,6 +38,10 @@ pomExtra := (
     <developer>
       <name>Jeff Shaw</name>
       <id>shawjef3</id>
+    </developer>
+    <developer>
+      <name>bass3t</name>
+      <id>bass3t</id>
     </developer>
   </developers>
   <scm>

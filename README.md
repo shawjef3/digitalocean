@@ -87,6 +87,10 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ##Changelog
 
+### 0.8
+* Update to account for [March 20 changes](https://assets.digitalocean.com/email/APIv2_Breaking_Changes_Email.html).
+* Fix SSH key functionality, and added SshKey tests thanks to [bass3t](https://github.com/bass3t).
+
 ### 0.7
 Droplet creation has changed to return less information about the droplet.
 My solution is to just read the ID, and then ask for all the information

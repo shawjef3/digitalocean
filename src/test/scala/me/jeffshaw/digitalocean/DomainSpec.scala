@@ -12,32 +12,30 @@ class DomainSpec extends Spec with BeforeAndAfterAll {
 
   test("Domains can be created, listed, and deleted") {
 
-    val domain = Await.result(Domain.create(domainName, "10.0.0.1"), 30 seconds)
+    val t = for {
+      domain <- Domain.create(domainName, "10.0.0.1")
+      domains <- Domain.list
+      () = assert(domains.exists(_.name == domainName))
+      () <- domain.delete
+    } yield ()
 
-    val domains = Await.result(Domain.list, 10 seconds)
-    
-    assert(domains.exists(_.name == domainName))
-
-    Await.result(domain.delete, 10 seconds)
+    Await.result(t, 10 seconds)
   }
 
   test("Domains can have records added, listed and deleted") {
 
-    val domain = Await.result(Domain.create(domainName, "10.0.0.1"), 30 seconds)
+    val t = for {
+      domain <- Domain.create(domainName, "10.0.0.1")
+      aRecord <- domain.createA("host." + domainName + ".", "10.0.0.1")
+      allRecords <- domain.records
+      () = assert(allRecords.contains(aRecord))
+      () <- aRecord.delete
+      allWithoutARecord <- domain.records
+      () = assert(! allRecords.contains(aRecord))
+      () <- domain.delete
+    } yield ()
 
-    val aRecord = Await.result(domain.createA("host." + domainName + ".", "10.0.0.1"), 10 seconds)
-
-    var allRecords = Await.result(domain.records, 10 seconds)
-
-    assert(allRecords.contains(aRecord))
-
-    Await.result(aRecord.delete, 10 seconds)
-
-    allRecords = Await.result(domain.records, 10 seconds)
-
-    assert(! allRecords.contains(aRecord))
-
-    Await.result(domain.delete, 10 seconds)
+    Await.result(t, 30 seconds)
   }
 
   override protected def afterAll(): Unit = {
