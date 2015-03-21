@@ -18,7 +18,7 @@ http://www.jeffshaw.me/digitalocean/
 This project is now in Maven Central for Scala 2.10 and 2.11. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "0.7"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "0.8"
 ```
 
 Or, for a maven project:
@@ -27,7 +27,7 @@ Or, for a maven project:
 <dependency>
   <groupId>me.jeffshaw</groupId>
   <artifactId>digitalocean_2.11</artifactId>
-  <version>0.7</version>
+  <version>0.8</version>
 </dependency>
 ```
 
@@ -89,7 +89,7 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ### 0.8
 * Update to account for [March 20 changes](https://assets.digitalocean.com/email/APIv2_Breaking_Changes_Email.html).
-* Fix SSH key functionality, and added SshKey tests thanks to [bass3t](https://github.com/bass3t).
+* Fix SSH key functionality, and added tests for SshKey thanks to [bass3t](https://github.com/bass3t).
 
 ### 0.7
 Droplet creation has changed to return less information about the droplet.
