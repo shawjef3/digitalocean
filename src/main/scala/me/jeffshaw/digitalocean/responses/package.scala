@@ -165,4 +165,14 @@ package object responses {
   ) extends Page[digitalocean.Size] {
     override val page = sizes
   }
+
+  private [digitalocean] case class SshKey(sshKey: digitalocean.SshKey)
+
+  private [digitalocean] case class SshKeys(
+    sshKeys: Seq[digitalocean.SshKey],
+    meta: Option[Meta],
+    links: Option[Links]
+  ) extends Page[digitalocean.SshKey] {
+    override val page = sshKeys
+  }
 }

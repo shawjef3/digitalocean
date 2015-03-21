@@ -19,20 +19,33 @@ case class SshKey(
   }
 }
 
-object SshKey {
+object SshKey 
+  extends Path
+  with Listable[SshKey, responses.SshKeys] {
+  override val path: Seq[String] = Seq("account", "keys")
 
   def setNameByFingerprint(fingerprint: String, name: String)
       (implicit client: DigitalOceanClient, ec: ExecutionContext): Future[SshKey] = {
+    val path = this.path ++ Seq(fingerprint)
     val value = "name" -> name
 
-    client.put[SshKey](value, "account", "keys", fingerprint)
+    for {
+      response <- client.put[responses.SshKey](value, path: _*)
+    } yield {
+      response.sshKey
+    }
   }
 
   def setNameById(id: BigInt, name: String)
       (implicit client: DigitalOceanClient, ec: ExecutionContext): Future[SshKey] = {
+    val path = this.path ++ Seq(id.toString)
     val value = "name" -> name
 
-    client.put[SshKey](value, "account", "keys", id.toString())
+    for {
+      response <- client.put[responses.SshKey](value, path: _*)
+    } yield {
+      response.sshKey
+    }
   }
 
   def create(name: String, publicKey: String)
@@ -40,19 +53,21 @@ object SshKey {
     val value = ("name" -> name) ~
       ("public_key" -> publicKey)
 
-    client.post[SshKey](value, "account", "keys")
-  }
-
-  def list(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[SshKey]] = {
-    client.get[Seq[SshKey]]("account", "keys")
+    for {
+      response <- client.post[responses.SshKey](value, path: _*)
+    } yield {
+      response.sshKey
+    }
   }
 
   def deleteById(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
-    client.delete("account", "keys", id.toString)
+    val path = this.path ++ Seq(id.toString)
+    client.delete(path: _*)
   }
 
   def deleteByFingerprint(fingerprint: String)
       (implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
-    client.delete("account", "keys", fingerprint)
+    val path = this.path ++ Seq(fingerprint)
+    client.delete(path: _*)
   }
 }
