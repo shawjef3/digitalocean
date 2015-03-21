@@ -2,14 +2,20 @@ package me.jeffshaw.digitalocean
 
 import java.io.{DataOutputStream, ByteArrayOutputStream}
 import java.security.interfaces.RSAPublicKey
-import java.security.{PublicKey, KeyPair, KeyPairGenerator}
+import java.security.KeyPairGenerator
 import java.util.Base64
 
-import org.scalatest.{BeforeAndAfterEach, BeforeAndAfterAll, fixture}
+import org.scalatest.{BeforeAndAfterEach, BeforeAndAfterAll}
 
 import scala.concurrent._, duration._
 import scala.util.Random
 
+/**
+ * Note that these tests randomly fail, because Digital Ocean is slow
+ * to update your list of keys that are accessible to the API. This is the
+ * reason for all the calls to Thread.sleep(int).
+ * Sometimes even a 30 second wait isn't enough.
+ */
 class SshKeySpec extends Spec with BeforeAndAfterAll with BeforeAndAfterEach {
   private def genPK = {
     val kpg = KeyPairGenerator.getInstance("RSA")
@@ -30,24 +36,32 @@ class SshKeySpec extends Spec with BeforeAndAfterAll with BeforeAndAfterEach {
 
   private def keysCompare(k1: SshKey, k2: SshKey) = (k1.id == k2.id) && (k1.fingerprint == k2.fingerprint) && (k1.publicKey == k2.publicKey)
 
-  private var publicKey: String = ""
-  private var name1 = ""
-  private var name2 = ""
+  val namePrefix = "ScalaTest"
 
-  override protected def beforeAll() = { publicKey = genPK }
+  private val publicKey: String = genPK
 
-  override protected def beforeEach() = {
-    name1 = "Test" + Random.nextInt()
-    name2 = "TestUpdated" + Random.nextInt()
+  override protected def afterEach(): Unit = {
+    val cleanup = for {
+      keys <- SshKey.list
+      deletions <- Future.sequence(keys.filter(_.name.startsWith(namePrefix)).map(_.delete))
+    } yield deletions
+
+    Await.ready(cleanup, 10 seconds)
   }
 
-  test("Ssh keys can be created, renamed, listed, and deleted (by Id).") {
-    val key = Await.result(SshKey.create(name1, publicKey), 10 seconds)
+  test("(randomly fails)Ssh keys can be created, renamed, listed, and deleted (by Id).") {
+    val name = namePrefix + Random.nextInt()
+    val updatedName = namePrefix + "Updated" + Random.nextInt()
+
+    val key = Await.result(SshKey.create(name, publicKey), 10 seconds)
 
     var keys = Await.result(SshKey.list, 10 seconds).toSeq
     assert(keys.contains(key))
 
-    val newKey = Await.result(SshKey.setNameById(key.id, name2), 10 seconds)
+    val newKey = Await.result(SshKey.setNameById(key.id, updatedName), 10 seconds)
+
+    //Give Digital Ocean some time to catch up
+    Thread.sleep(10000)
 
     keys = Await.result(SshKey.list, 10 seconds).toSeq
     assert(keys.contains(newKey))
@@ -61,12 +75,18 @@ class SshKeySpec extends Spec with BeforeAndAfterAll with BeforeAndAfterEach {
     assert(!keys.contains(newKey))
   }
 
-  test("Ssh keys can be created, renamed, listed, and deleted (by fingerprint).") {
-    val key = Await.result(SshKey.create(name1, publicKey), 10 seconds)
+  test("(randomly fails)Ssh keys can be created, renamed, listed, and deleted (by fingerprint).") {
+    val name = namePrefix + Random.nextInt()
+    val updatedName = namePrefix + "Updated" + Random.nextInt()
+
+    val key = Await.result(SshKey.create(name, publicKey), 10 seconds)
     var keys = Await.result(SshKey.list, 10 seconds).toSeq
     assert(keys.contains(key))
 
-    val newKey = Await.result(SshKey.setNameByFingerprint(key.fingerprint, name2), 10 seconds)
+    val newKey = Await.result(SshKey.setNameByFingerprint(key.fingerprint, updatedName), 10 seconds)
+
+    //Give Digital Ocean some time to catch up
+    Thread.sleep(10000)
 
     keys = Await.result(SshKey.list, 10 seconds).toSeq
     assert(keys.contains(newKey))
@@ -80,12 +100,18 @@ class SshKeySpec extends Spec with BeforeAndAfterAll with BeforeAndAfterEach {
     assert(!keys.contains(newKey))
   }
 
-  test("Ssh keys can be created, renamed, and deleted (native).") {
-    val key = Await.result(SshKey.create(name1, publicKey), 10 seconds)
+  test("(randomly fails)Ssh keys can be created, renamed, and deleted (native).") {
+    val name = namePrefix + Random.nextInt()
+    val updatedName = namePrefix + "Updated" + Random.nextInt()
+
+    val key = Await.result(SshKey.create(name, publicKey), 10 seconds)
     var keys = Await.result(SshKey.list, 10 seconds).toSeq
     assert(keys.contains(key))
 
-    val newKey = Await.result(key.setName(name2), 10 seconds)
+    val newKey = Await.result(key.setName(updatedName), 10 seconds)
+
+    //Give Digital Ocean some time to catch up
+    Thread.sleep(10000)
 
     keys = Await.result(SshKey.list, 10 seconds).toSeq
     assert(keys.contains(newKey))
