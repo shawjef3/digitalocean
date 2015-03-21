@@ -11,7 +11,7 @@ class DropletSpec extends Spec with BeforeAndAfterAll {
   //but something bad happens afterwards.
   private var dropletId: Option[BigInt] = None
 
-  val dropletName = "test" + Random.nextInt()
+  val dropletName = "ScalaTest" + Random.nextInt()
 
   test("Droplets can be created, listed, and deleted.") {
     val region = NewYork2

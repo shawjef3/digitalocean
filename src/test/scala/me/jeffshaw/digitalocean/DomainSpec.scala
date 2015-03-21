@@ -8,7 +8,7 @@ import scala.util.Random
 
 class DomainSpec extends Spec with BeforeAndAfterAll {
 
-  val domainName = "test" + Random.nextInt() + ".com"
+  val domainName = "scalatest" + Random.nextInt() + ".com"
 
   test("Domains can be created, listed, and deleted") {
 
