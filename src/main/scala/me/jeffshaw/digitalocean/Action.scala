@@ -12,7 +12,7 @@ case class Action(
   completedAt: Option[Instant],
   resourceId: BigInt,
   resourceType: Action.ResourceType,
-  region: String
+  region: Region
 ) {
 
   def isCompleted: Boolean = {
