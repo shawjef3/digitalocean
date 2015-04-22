@@ -40,6 +40,10 @@ case object Amsterdam3 extends RegionEnum {
   override val slug: String = "ams3"
 }
 
+case object Frankfurt1 extends RegionEnum {
+  override val slug: String = "fra1"
+}
+
 case class OtherRegion(slug: String) extends RegionEnum
 
 object RegionEnum {
@@ -56,6 +60,7 @@ object RegionEnum {
     Singapore1.slug -> Singapore1,
     London1.slug -> London1,
     NewYork3.slug -> NewYork3,
-    Amsterdam3.slug -> Amsterdam3
+    Amsterdam3.slug -> Amsterdam3,
+    Frankfurt1.slug -> Frankfurt1
   )
 }
