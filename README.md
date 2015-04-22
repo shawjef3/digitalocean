@@ -5,7 +5,7 @@ Scala wrapper around Digital Ocean's API, version 2
 
 This API is entirely asynchronous, so you'll want to know how to use Futures. Some classes have a "complete" method that
 perform several operations for you so that you can know if an operation such as Droplet.create or an action have
-completed. "complete" methods are also futures.
+completed. "complete" methods also return futures.
 
 ##Scaladoc
 
@@ -18,7 +18,7 @@ http://www.jeffshaw.me/digitalocean/
 This project is now in Maven Central for Scala 2.10 and 2.11. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "0.8"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "1.0"
 ```
 
 Or, for a maven project:
@@ -27,7 +27,7 @@ Or, for a maven project:
 <dependency>
   <groupId>me.jeffshaw</groupId>
   <artifactId>digitalocean_2.11</artifactId>
-  <version>0.8</version>
+  <version>1.0</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ val droplet =
       name = "test",
       region = NewYork2,
       size = `512mb`,
-      image = 3448674,
+      image = 11523060,
       sshKeys = Seq.empty,
       backups = false,
       ipv6 = false,
@@ -86,6 +86,10 @@ Await.result(droplet.delete.flatMap(_.complete), 2 minutes)
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
 
 ##Changelog
+
+### 1.0
+* Add Frankfurt1 to the Region enumeration.
+* OAuth support may come in a future 2.0 release.
 
 ### 0.8
 * Update to account for [March 20 changes](https://assets.digitalocean.com/email/APIv2_Breaking_Changes_Email.html).
