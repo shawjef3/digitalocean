@@ -14,7 +14,7 @@ class DropletSpec extends Spec with BeforeAndAfterAll {
   test("Droplets can be created, listed, and deleted.") {
     val region = NewYork2
     val size = `512mb`
-    val image = 10325992 //CentOS 6.5 32-bit
+    val image = 11523060 //CentOS 6.5 32-bit
 
     val t = for {
       droplet <- Droplet.create(dropletName, region, size, image, Seq.empty, false, false, false, None)
