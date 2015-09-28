@@ -87,6 +87,9 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ##Changelog
 
+### 1.1
+* Add Toronto1 to the Region enumeration.
+
 ### 1.0
 * Add Frankfurt1 to the Region enumeration.
 * OAuth support may come in a future 2.0 release.
