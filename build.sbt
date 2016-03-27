@@ -6,14 +6,14 @@ version := "1.1"
 
 libraryDependencies ++= Seq(
 	"net.databinder.dispatch" %% "dispatch-core" % "0.11.3",
-	"org.json4s" %% "json4s-native" % "3.2.11",
+	"org.json4s" %% "json4s-native" % "3.3.0",
 	"com.typesafe" % "config" % "1.2.1" % "test",
 	"org.scalatest" %% "scalatest" % "2.2.5" % "test"
 )
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-crossScalaVersions := Seq("2.10.5")
+crossScalaVersions := Seq("2.10.6")
 
 licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 

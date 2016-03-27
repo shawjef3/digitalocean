@@ -175,4 +175,13 @@ package object responses {
   ) extends Page[digitalocean.SshKey] {
     override val page = sshKeys
   }
+
+  private [digitalocean] case class FloatingIps(
+    floating_ips: Seq[digitalocean.FloatingIp],
+    meta: Option[Meta],
+    links: Option[Links]
+  ) extends Page[digitalocean.FloatingIp] {
+    override val page = floating_ips
+  }
+
 }
