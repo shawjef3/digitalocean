@@ -7,7 +7,7 @@ import org.scalatest._
 
 import scala.concurrent._, duration._
 
-class Suite extends FunSuite with Matchers {
+abstract class Suite extends FunSuite with Matchers {
   val config = ConfigFactory.load()
 
   implicit val client = DigitalOceanClient(
