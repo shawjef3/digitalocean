@@ -41,8 +41,6 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
 
   val namePrefix = "ScalaTest"
 
-  private val publicKey: String = genPK
-
   override protected def afterAll(): Unit = {
     val cleanup = for {
       keys <- SshKey.list()
@@ -77,6 +75,7 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
 
   test("Ssh keys can be created, renamed, listed, and deleted (by Id).") {
     val name = namePrefix + Random.nextInt()
+    val publicKey: String = genPK
     val updatedName = name + "Updated"
 
     val t = for {
@@ -101,6 +100,7 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
 
   test("Ssh keys can be created, renamed, listed, and deleted (by fingerprint).") {
     val name = namePrefix + Random.nextInt()
+    val publicKey: String = genPK
     val updatedName = name + "Updated"
 
     val t = for {
@@ -125,6 +125,7 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
 
   test("Ssh keys can be created, renamed, and deleted (native).") {
     val name = namePrefix + Random.nextInt()
+    val publicKey: String = genPK
     val updatedName = name + "Updated"
 
     val t = for {
