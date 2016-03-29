@@ -6,9 +6,9 @@ class ImageSpec extends Suite {
   test("Images can be listed by the client") {
     //This api call takes a little longer than others,
     //so let the test take a little longer.
-    val images = Await.result(Image.list(`private` = false), 10 seconds)
+    val images = Await.result(Image.list(`private` = false, listType = Image.ListType.Distribution), 10 seconds).toList
 
-    assert(images.exists(_.slug == testImageSlug))
+    assert(images.exists(_.slug == Some(testImageSlug)))
   }
 
   //By default, the page size is 25,so try and list more images than that.
