@@ -13,7 +13,7 @@ case class SshKey(
     SshKey.setNameById(id, name)
   }
 
-  def delete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
+  def delete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
     SshKey.deleteById(id)
   }
 }

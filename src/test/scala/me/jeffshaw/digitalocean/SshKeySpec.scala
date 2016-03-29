@@ -12,7 +12,7 @@ import scala.util.Random
 /**
  * Note that these tests randomly fail, because Digital Ocean is slow
  * to update your list of keys that are accessible to the API. This is the
- * reason for all the calls to Thread.sleep(int).
+ * reason for all the calls to listUntil(keys => keys.contains(key)).
  * Sometimes even a 30 second wait isn't enough.
  */
 class SshKeySpec extends Suite with BeforeAndAfterAll {
@@ -44,7 +44,7 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
   override protected def afterAll(): Unit = {
     val cleanup = for {
       keys <- SshKey.list()
-      deletions <- Future.sequence(keys.filter(_.name.startsWith(namePrefix)).map(_.delete))
+      deletions <- Future.sequence(keys.filter(_.name.startsWith(namePrefix)).map(_.delete()))
     } yield deletions
 
     Await.result(cleanup, 10 seconds)
