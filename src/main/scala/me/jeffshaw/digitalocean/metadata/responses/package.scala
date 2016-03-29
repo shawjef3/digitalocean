@@ -1,18 +1,19 @@
-package me.jeffshaw.digitalocean
-package metadata
+package me.jeffshaw.digitalocean.metadata
 
-import java.net._
+import java.net.InetAddress
+import me.jeffshaw.digitalocean.{NetworkType, RegionEnum, metadata}
 
 package object responses {
 
-  private[metadata] case class Metadata(
+  case class Metadata(
     droplet_id: BigInt,
     hostname: String,
     vendor_data: String,
     public_keys: Seq[String],
-    region: String,
+    region: RegionEnum,
     interfaces: Interfaces,
-    dns: Nameservers
+    floating_ip: Option[metadata.FloatingIp],
+    dns: Dns
   ) {
     def toMetadata: metadata.Metadata = {
       metadata.Metadata(
@@ -20,14 +21,44 @@ package object responses {
         hostname,
         vendor_data,
         public_keys,
-        RegionEnum.fromSlug(region),
-        interfaces,
-        dns.nameservers.map(InetAddress.getByName)
+        region,
+        interfaces.toInterfaces,
+        floating_ip,
+        metadata.Dns(dns.nameservers.map(InetAddress.getByName))
       )
     }
   }
 
-  private[metadata] case class Nameservers(
-    nameservers: Seq[String]
-  )
+  case class Dns(nameservers: Seq[String])
+
+  case class Interfaces(
+    `private`: Seq[Interface],
+    public: Seq[Interface]
+  ) {
+    def toInterfaces: metadata.Interfaces =
+      metadata.Interfaces(
+        `private`.map(_.toInterface),
+        public.map(_.toInterface)
+      )
+  }
+
+  case class Interface(
+    ipv4: Option[Ipv4],
+    anchor_ipv4: Option[Ipv4],
+    ipv6: Option[Ipv6],
+    anchor_ipv6: Option[Ipv6],
+    mac: String,
+    `type`: NetworkType
+  ) {
+    def toInterface: metadata.Interface =
+      metadata.Interface(
+        ipv4,
+        anchor_ipv4,
+        ipv6,
+        anchor_ipv6,
+        mac,
+        `type`
+      )
+  }
+
 }

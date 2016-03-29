@@ -22,21 +22,21 @@ private[digitalocean] case class DomainRecordFields(
 
   def toDomainRecord(domainName: String): dns.DomainRecord = {
     `type` match {
-      case "A" =>
+      case dns.A.StringValue =>
         val address = inetAddress.get.asInstanceOf[Inet4Address]
         dns.A(domainName, id, name.get, address)
-      case "AAAA" =>
+      case dns.AAAA.StringValue =>
         val address = inetAddress.get.asInstanceOf[Inet6Address]
         dns.AAAA(domainName, id, name.get, address)
-      case "CNAME" =>
+      case dns.CNAME.StringValue =>
         dns.CNAME(domainName, id, name.get, data.get)
-      case "MX" =>
+      case dns.MX.StringValue =>
         dns.MX(domainName, id, data.get, priority.get)
-      case "TXT" =>
+      case dns.TXT.StringValue =>
         dns.TXT(domainName, id, name.get, data.get)
-      case "SRV" =>
+      case dns.SRV.StringValue =>
         dns.SRV(domainName, id, name.get, inetAddress.get, priority.get, weight.get)
-      case "NS" =>
+      case dns.NS.StringValue =>
         dns.NS(domainName, id, data.get)
     }
   }

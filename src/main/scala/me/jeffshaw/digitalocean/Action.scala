@@ -27,7 +27,7 @@ case class Action(
    * @param ec
    * @return
    */
-  def complete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+  def complete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     def actionRefresh: Action = {
       Thread.sleep(client.actionCheckInterval.toMillis)
       Await.result(Action(id), client.maxWaitPerRequest)
@@ -51,7 +51,7 @@ object Action extends Path with Listable[Action, responses.Actions] {
   def apply(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     val path = this.path :+ id.toString
     for {
-      response <- client.get[responses.Action](path: _*)
+      response <- client.get[responses.Action](path)
     } yield {
       response.action
     }

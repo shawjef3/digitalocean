@@ -18,7 +18,7 @@ http://www.jeffshaw.me/digitalocean/
 This project is now in Maven Central for Scala 2.10 and 2.11. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "1.1"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "2.0"
 ```
 
 Or, for a maven project:
@@ -86,6 +86,14 @@ Await.result(droplet.delete.flatMap(_.complete), 2 minutes)
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
 
 ##Changelog
+
+### 2.0
+* Methods that return Futures but didn't have an empty parameter list now require an empty parameter list. Examples are list methods and delete methods.
+* Image list methods now ask whether you want private images or not, and if you want All, Application, or Distribution images.
+* Add support for floating IPs.
+* Add support for actions on droplet tags.
+* The ssh key tests are more reliable.
+* Supports the latest droplet metadata.
 
 ### 1.1
 * Add Toronto1 to the Region enumeration.

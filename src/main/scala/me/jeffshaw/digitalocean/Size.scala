@@ -32,7 +32,7 @@ object Size
    */
   def apply(slug: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Size] = {
     for {
-      sizes <- list
+      sizes <- list()
     } yield {
       sizes.find(_.slug == slug).getOrElse(throw new NoSuchElementException(slug))
     }

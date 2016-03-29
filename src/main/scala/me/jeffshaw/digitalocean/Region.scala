@@ -14,7 +14,7 @@ case class Region(
   }
 
   def toEnum: RegionEnum = {
-    RegionEnum.fromSlug(this.slug)
+    RegionEnum.fromSlug(slug)
   }
 }
 
@@ -29,7 +29,7 @@ object Region
    */
   def apply(slug: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Region] = {
     for {
-      response <- list
+      response <- list()
     } yield {
       response.find(_.slug == slug).getOrElse(throw new NoSuchElementException(slug))
     }
@@ -38,4 +38,5 @@ object Region
   def apply(enum: RegionEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Region] = {
     apply(enum.slug)
   }
+
 }

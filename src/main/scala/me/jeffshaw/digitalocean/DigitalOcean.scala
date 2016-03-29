@@ -12,10 +12,10 @@ case class DigitalOcean(
 object DigitalOcean {
   def list(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DigitalOcean] = {
     for {
-      droplets <- Droplet.list
-      images <- Image.list
-      regions <- Region.list
-      sizes <- Size.list
+      droplets <- Droplet.list()
+      images <- Image.list()
+      regions <- Region.list()
+      sizes <- Size.list()
     } yield {
       DigitalOcean(droplets, images, regions, sizes)
     }

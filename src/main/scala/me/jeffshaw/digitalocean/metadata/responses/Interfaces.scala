@@ -1,6 +1,7 @@
-package me.jeffshaw.digitalocean.metadata
+package me.jeffshaw.digitalocean.metadata.responses
 
 import me.jeffshaw.digitalocean.NetworkType
+import me.jeffshaw.digitalocean.metadata.{Ipv4, Ipv6}
 
 case class Interface(
   ipv4: Option[Ipv4],

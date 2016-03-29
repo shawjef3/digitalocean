@@ -1,0 +1,46 @@
+{
+  "droplet_id": 1,
+  "hostname": "www.jeffshaw.me",
+  "vendor_data": "#cloud-config\ndisable_root: false\nmanage_etc_hosts: true\n\n# The modules that run in the 'init' stage\ncloud_init_modules:\n - migrator\n - ubuntu-init-switch\n - seed_random\n - bootcmd\n - write-files\n - growpart\n - resizefs\n - set_hostname\n - update_hostname\n - [ update_etc_hosts, once-per-instance ]\n - ca-certs\n - rsyslog\n - users-groups\n - ssh\n\n# The modules that run in the 'config' stage\ncloud_config_modules:\n - disk_setup\n - mounts\n - ssh-import-id\n - locale\n - set-passwords\n - grub-dpkg\n - apt-pipelining\n - apt-configure\n - package-update-upgrade-install\n - landscape\n - timezone\n - puppet\n - chef\n - salt-minion\n - mcollective\n - disable-ec2-metadata\n - runcmd\n - byobu\n\n# The modules that run in the 'final' stage\ncloud_final_modules:\n - rightscale_userdata\n - scripts-vendor\n - scripts-per-once\n - scripts-per-boot\n - scripts-per-instance\n - scripts-user\n - ssh-authkey-fingerprints\n - keys-to-console\n - phone-home\n - final-message\n - power-state-change\n",
+  "public_keys": ["key"],
+  "region": "nyc3",
+  "interfaces": {
+    "private": [{
+      "ipv4": {
+        "ip_address": "10.132.1.179",
+        "netmask": "255.255.0.0",
+        "gateway": "10.132.0.1"
+      },
+      "mac": "04:01:2b:8b:74:02",
+      "type": "private"
+    }],
+    "public": [{
+      "ipv4": {
+        "ip_address": "104.131.80.85",
+        "netmask": "255.255.192.0",
+        "gateway": "104.131.64.1"
+      },
+      "ipv6": {
+        "ip_address": "2604:A880:0800:0010:0000:0000:00BB:A001",
+        "cidr": 64,
+        "gateway": "2604:A880:0800:0010:0000:0000:0000:0001"
+      },
+      "anchor_ipv4": {
+        "ip_address": "10.17.0.6",
+        "netmask": "255.255.0.0",
+        "gateway": "10.17.0.1"
+      },
+      "mac": "04:01:2b:8b:74:01",
+      "type": "public"
+    }]
+  },
+  "floating_ip": {
+    "ipv4": {
+      "active": true,
+      "ip_address": "45.55.127.218"
+    }
+  },
+  "dns": {
+    "nameservers": ["8.8.8.8", "8.8.4.4"]
+  }
+}

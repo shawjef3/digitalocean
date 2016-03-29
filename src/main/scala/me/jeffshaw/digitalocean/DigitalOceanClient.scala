@@ -18,13 +18,14 @@ case class DigitalOceanClient(
   maxWaitPerRequest: Duration,
   actionCheckInterval: Duration
 ) {
-  private val requestPrefix =
+  private val requestPrefix: Req =
     DigitalOceanClient.host.addHeader("Authorization", "Bearer " + token)
 
   /**
    * This needs to be used carefully, because it can potentially give
    * the api key to a 3rd party.
-   * @param req
+    *
+    * @param req
    * @tparam T
    * @return
    */
@@ -32,12 +33,19 @@ case class DigitalOceanClient(
     parseResponse[T](Http(req.addHeader("Authorization", "Bearer " + token)))
   }
 
-  def setPath(pathElements: Seq[String]): Req = {
-    pathElements.foldLeft(requestPrefix)((accum, pathElement) => accum / pathElement)
+  def createRequest(
+    path: Seq[String],
+    queryParameters: Map[String, Seq[String]] = Map.empty
+  ): Req = {
+    path.foldLeft(requestPrefix)((accum, pathElement) => accum / pathElement).
+      setQueryParameters(queryParameters)
   }
 
-  def delete(path: String*): Future[Unit] = {
-    val request = Http(setPath(path) DELETE)
+  def delete(
+    path: Seq[String],
+    queryParameters: Map[String, Seq[String]] = Map.empty
+  ): Future[Unit] = {
+    val request = Http(createRequest(path, queryParameters) DELETE)
 
     for {
       response <- request
@@ -66,13 +74,19 @@ case class DigitalOceanClient(
     }
   }
 
-  def get[T: Manifest](path: String*): Future[T] = {
-    val request = Http(setPath(path) GET)
+  def get[T: Manifest](
+    path: Seq[String],
+    queryParameters: Map[String, Seq[String]] = Map.empty
+  ): Future[T] = {
+    val request = Http(createRequest(path, queryParameters) GET)
     parseResponse[T](request)
   }
 
-  def exists(path: String*): Future[Boolean] = {
-    val request = Http(setPath(path) HEAD)
+  def exists(
+    path: Seq[String],
+    queryParameters: Map[String, Seq[String]] = Map.empty
+  ): Future[Boolean] = {
+    val request = Http(createRequest(path, queryParameters) HEAD)
     for {
       response <- request
     } yield {
@@ -80,15 +94,23 @@ case class DigitalOceanClient(
     }
   }
 
-  def post[T: Manifest](message: JValue, path: String*): Future[T] = {
+  def post[T: Manifest](
+    path: Seq[String],
+    message: JValue,
+    queryParameters: Map[String, Seq[String]] = Map.empty
+  ): Future[T] = {
     val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
-    val request = Http(setPath(path) setBody(messageBody) POST)
+    val request = Http(createRequest(path = path).setBody(messageBody).POST)
     parseResponse[T](request)
   }
 
-  def put[T: Manifest](message: JValue, path: String*): Future[T] = {
+  def put[T: Manifest](
+    path: Seq[String],
+    message: JValue,
+    queryParameters: Map[String, Seq[String]] = Map.empty
+  ): Future[T] = {
     val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
-    val request = Http(setPath(path) setBody(messageBody) PUT)
+    val request = Http(createRequest(path = path).setBody(messageBody).PUT)
     parseResponse[T](request)
   }
 }

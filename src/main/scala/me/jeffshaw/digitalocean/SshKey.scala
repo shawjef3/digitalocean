@@ -1,7 +1,6 @@
 package me.jeffshaw.digitalocean
 
 import org.json4s.JsonDSL._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 case class SshKey(
@@ -19,7 +18,7 @@ case class SshKey(
   }
 }
 
-object SshKey 
+object SshKey
   extends Path
   with Listable[SshKey, responses.SshKeys] {
   override val path: Seq[String] = Seq("account", "keys")
@@ -30,7 +29,7 @@ object SshKey
     val value = "name" -> name
 
     for {
-      response <- client.put[responses.SshKey](value, path: _*)
+      response <- client.put[responses.SshKey](path, value)
     } yield {
       response.sshKey
     }
@@ -42,7 +41,7 @@ object SshKey
     val value = "name" -> name
 
     for {
-      response <- client.put[responses.SshKey](value, path: _*)
+      response <- client.put[responses.SshKey](path, value)
     } yield {
       response.sshKey
     }
@@ -54,7 +53,7 @@ object SshKey
       ("public_key" -> publicKey)
 
     for {
-      response <- client.post[responses.SshKey](value, path: _*)
+      response <- client.post[responses.SshKey](path, value)
     } yield {
       response.sshKey
     }
@@ -62,12 +61,12 @@ object SshKey
 
   def deleteById(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
     val path = this.path ++ Seq(id.toString)
-    client.delete(path: _*)
+    client.delete(path)
   }
 
   def deleteByFingerprint(fingerprint: String)
       (implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
     val path = this.path ++ Seq(fingerprint)
-    client.delete(path: _*)
+    client.delete(path)
   }
 }

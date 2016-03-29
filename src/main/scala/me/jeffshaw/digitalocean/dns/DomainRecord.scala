@@ -13,9 +13,13 @@ sealed trait DomainRecord {
   val id: BigInt
   val `type`: String
 
-  def delete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
-    client.delete("domains", domainName, "records", id.toString)
+  def delete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
+    client.delete(Seq("domains", domainName, "records", id.toString))
   }
+}
+
+trait StringValueOfObjectName {
+  val StringValue = getClass.getSimpleName.dropRight(1)
 }
 
 sealed trait DomainRecordWithName extends DomainRecord {
@@ -27,7 +31,7 @@ sealed trait DomainRecordWithName extends DomainRecord {
     ec: ExecutionContext
   ): Future[DomainRecord] = {
     val putBody: JValue = "name" -> newName
-    client.put[responses.DomainRecord](putBody, "domains", domainName, "records", id.toString).
+    client.put[responses.DomainRecord](Seq("domains", domainName, "records", id.toString), putBody).
       map(_.domainRecord.toDomainRecord(domainName))
   }
 }
@@ -38,8 +42,10 @@ case class A(
   name: String,
   data: Inet4Address
 ) extends DomainRecordWithName {
-  override val `type`: String = "A"
+  override val `type`: String = A.StringValue
 }
+
+object A extends StringValueOfObjectName
 
 case class AAAA(
   domainName: String,
@@ -47,8 +53,10 @@ case class AAAA(
   name: String,
   data: Inet6Address
 ) extends DomainRecordWithName {
-  override val `type`: String = "AAAA"
+  override val `type`: String = AAAA.StringValue
 }
+
+object AAAA extends StringValueOfObjectName
 
 case class CNAME(
   domainName: String,
@@ -56,8 +64,10 @@ case class CNAME(
   name: String,
   data: String
 ) extends DomainRecordWithName {
-  override val `type`: String = "CNAME"
+  override val `type`: String = CNAME.StringValue
 }
+
+object CNAME extends StringValueOfObjectName
 
 case class MX(
   domainName: String,
@@ -65,8 +75,10 @@ case class MX(
   data: String,
   priority: Int
 ) extends DomainRecord {
-  override val `type`: String = "MX"
+  override val `type`: String = MX.StringValue
 }
+
+object MX extends StringValueOfObjectName
 
 case class TXT(
   domainName: String,
@@ -74,8 +86,10 @@ case class TXT(
   name: String,
   data: String
 ) extends DomainRecordWithName {
-  override val `type`: String = "TXT"
+  override val `type`: String = TXT.StringValue
 }
+
+object TXT extends StringValueOfObjectName
 
 case class SRV(
   domainName: String,
@@ -85,13 +99,17 @@ case class SRV(
   priority: Int,
   weight: Int
 ) extends DomainRecordWithName {
-  override val `type`: String = "SRV"
+  override val `type`: String = SRV.StringValue
 }
+
+object SRV extends StringValueOfObjectName
 
 case class NS(
   domainName: String,
   id: BigInt,
   data: String
 ) extends DomainRecord {
-  override val `type`: String = "NS"
+  override val `type`: String = NS.StringValue
 }
+
+object NS extends StringValueOfObjectName

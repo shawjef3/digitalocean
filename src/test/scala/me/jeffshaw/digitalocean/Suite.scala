@@ -7,7 +7,7 @@ import org.scalatest._
 
 import scala.concurrent._, duration._
 
-class Spec extends FunSuite with Matchers {
+class Suite extends FunSuite with Matchers {
   val config = ConfigFactory.load()
 
   implicit val client = DigitalOceanClient(
@@ -16,5 +16,10 @@ class Spec extends FunSuite with Matchers {
     actionCheckInterval = config.getDuration("action_check_interval", TimeUnit.MILLISECONDS) milliseconds
   )
 
+  val testImageSlug = config.getString("image_slug")
+
+  val testRegionSlug = config.getString("region")
+
   implicit val ec = ExecutionContext.global
+
 }

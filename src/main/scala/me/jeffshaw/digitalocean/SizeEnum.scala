@@ -43,8 +43,12 @@ case object `64gb` extends SizeEnum {
 case class OtherSize(slug: String) extends SizeEnum
 
 object SizeEnum {
-  def fromSlug(slug: String): SizeEnum = {
+  implicit def fromSlug(slug: String): SizeEnum = {
     slugEnumMap.getOrElse(slug, OtherSize(slug))
+  }
+
+  implicit def fromSize(size: Size): SizeEnum = {
+    size.toEnum
   }
 
   val slugEnumMap = Map(

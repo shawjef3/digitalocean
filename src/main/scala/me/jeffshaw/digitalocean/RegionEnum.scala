@@ -1,5 +1,8 @@
 package me.jeffshaw.digitalocean
 
+import org.json4s.CustomSerializer
+import org.json4s.JsonAST.JString
+
 sealed trait RegionEnum {
   val slug: String
 }
@@ -51,8 +54,12 @@ case object Toronto1 extends RegionEnum {
 case class OtherRegion(slug: String) extends RegionEnum
 
 object RegionEnum {
-  def fromSlug(slug: String): RegionEnum = {
+  implicit def fromSlug(slug: String): RegionEnum = {
     slugEnumMap.getOrElse(slug, OtherRegion(slug))
+  }
+
+  implicit def fromRegion(r: Region): RegionEnum = {
+    r.toEnum
   }
 
   val slugEnumMap = Map(
@@ -67,5 +74,17 @@ object RegionEnum {
     Amsterdam3.slug -> Amsterdam3,
     Frankfurt1.slug -> Frankfurt1,
     Toronto1.slug -> Toronto1
+  )
+
+  private[digitalocean] case object Serializer extends CustomSerializer[RegionEnum](format =>
+    (
+      {
+        case JString(slug) => fromSlug(slug)
+      },
+      {
+        case regionEnum: RegionEnum =>
+          JString(regionEnum.slug)
+      }
+      )
   )
 }

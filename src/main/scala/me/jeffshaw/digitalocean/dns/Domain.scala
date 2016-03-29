@@ -1,12 +1,10 @@
 package me.jeffshaw.digitalocean.dns
 
 import java.net._
-
 import me.jeffshaw.digitalocean._
 import me.jeffshaw.digitalocean.responses.PagedResponse
 import org.json4s.Extraction
 import org.json4s.JsonDSL._
-
 import scala.concurrent.{ExecutionContext, Future}
 
 case class Domain(
@@ -17,16 +15,16 @@ case class Domain(
 
   override protected val path: Seq[String] = Seq("domains", name, "records")
 
-  def delete(
+  def delete()(
     implicit client: DigitalOceanClient,
     ec: ExecutionContext
   ): Future[Unit] = {
     Domain.delete(name)
   }
 
-  def records(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[DomainRecord]] = {
+  def records()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[DomainRecord]] = {
     val pagedResponse = for {
-      response <- client.get[responses.DomainRecords](path: _*)
+      response <- client.get[responses.DomainRecords](path)
     } yield {
       PagedResponse[responses.DomainRecordFields, responses.DomainRecords](
         client,
@@ -163,7 +161,7 @@ object Domain extends Path
   ): Future[Domain] = {
     val getPath = path :+ name
 
-    client.get[responses.Domain](getPath: _*).map(_.domain)
+    client.get[responses.Domain](getPath).map(_.domain)
   }
 
   def create(
@@ -189,8 +187,8 @@ object Domain extends Path
         ("ip_address" -> ipAddress.getHostAddress)
 
     client.post[responses.Domain](
-      postBody,
-      path: _*
+      path,
+      postBody
     ).map(_.domain)
   }
 
@@ -201,7 +199,7 @@ object Domain extends Path
   ): Future[Unit] = {
     val deletePath = path :+ name
 
-    client.delete(deletePath: _*)
+    client.delete(deletePath)
   }
 
   def deleteRecord(
@@ -211,7 +209,7 @@ object Domain extends Path
     ec: ExecutionContext
   ): Future[Unit] = {
     val deletePath = path ++ Seq(name, recordId.toString)
-    client.delete(deletePath: _*)
+    client.delete(deletePath)
   }
 
   private case class CreateRecord(
@@ -232,7 +230,7 @@ object Domain extends Path
     val postPath = path ++ Seq(domainName, "records")
     val postBody = Extraction.decompose(record)
 
-    client.post[responses.DomainRecord](postBody, postPath: _*).map(_.domainRecord.toDomainRecord(domainName))
+    client.post[responses.DomainRecord](postPath, postBody).map(_.domainRecord.toDomainRecord(domainName))
   }
 
   def createA(

@@ -6,7 +6,7 @@ case class DropletCreation(
   droplet: Droplet,
   actionId: BigInt
 ) {
-  def action(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+  def action()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     Action(actionId)
   }
 
@@ -16,10 +16,14 @@ case class DropletCreation(
    * @param ec
    * @return
    */
-  def complete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+  def complete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     for {
-      a <- action
-      c <- a.complete
+      a <- action()
+      c <- a.complete()
     } yield c
   }
+}
+
+object DropletCreation {
+  implicit def toDroplet(dc: DropletCreation): Droplet = dc.droplet
 }

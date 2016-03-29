@@ -11,26 +11,8 @@ package object digitalocean {
       Inet4AddressSerializer +
       Inet6AddressSerializer +
       ActionResourceTypeSerializer +
-      ActionStatusSerializer
-  }
-
-  implicit def Region2RegionEnum(r: Region): RegionEnum = {
-    r.toEnum
-  }
-
-  implicit def String2RegionEnum(slug: String): RegionEnum = {
-    RegionEnum.fromSlug(slug)
-  }
-
-  implicit def Size2SizeEnum(size: Size): SizeEnum = {
-    size.toEnum
-  }
-
-  implicit def String2SizeEnum(slug: String): SizeEnum = {
-    SizeEnum.fromSlug(slug)
-  }
-
-  implicit def DropletCreation2Droplet(dropletCreation: DropletCreation): Droplet = {
-    dropletCreation.droplet
+      ActionStatusSerializer +
+      Image.Type.Serializer +
+      RegionEnum.Serializer
   }
 }
