@@ -52,7 +52,7 @@ implicit val client = DigitalOceanClient(
 )
 
 //List all the regions.
-val regions = Await.result(Region.list, 5 seconds)
+val regions = Await.result(Region.list(), 5 seconds)
 
 //Create a small CentOS 6.5 32-bit droplet.
 val droplet =
@@ -72,13 +72,13 @@ val droplet =
   )
 
 //Wait for the droplet to become active.
-Await.result(droplet.complete, 2 minutes)
+Await.result(droplet.complete(), 2 minutes)
 
 //Do stuff with the droplet.
 
 //Run the delete the command, and then wait for the droplet to stop existing.
 
-Await.result(droplet.delete.flatMap(_.complete), 2 minutes)
+Await.result(droplet.delete().flatMap(_.complete), 2 minutes)
 
 //CTRL-D if you used :paste.
 ```
