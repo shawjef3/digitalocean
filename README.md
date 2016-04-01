@@ -54,7 +54,7 @@ implicit val client = DigitalOceanClient(
 //List all the regions.
 val regions = Await.result(Region.list(), 5 seconds)
 
-//Create a small CentOS 6.5 32-bit droplet.
+//Create a small CentOS 5.8 32-bit droplet.
 val droplet =
   Await.result(
     Droplet.create(
