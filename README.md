@@ -87,6 +87,9 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ##Changelog
 
+### 2.1
+* Fix a bug where polling for action completion occured on the caller's thread.
+
 ### 2.0
 * Methods that return Futures but didn't have an empty parameter list now require an empty parameter list. Examples are list methods and delete methods.
 * Image list methods now ask whether you want private images or not, and if you want All, Application, or Distribution images.
