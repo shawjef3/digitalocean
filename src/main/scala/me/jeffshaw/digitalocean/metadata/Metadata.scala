@@ -20,7 +20,7 @@ case class Metadata(
 object Metadata {
   import me.jeffshaw.digitalocean.formats
 
-  def apply(metadata: String): Metadata = {
+  private[digitalocean] def apply(metadata: String): Metadata = {
     val json = JsonMethods.parse(metadata)
     Extraction.extract[responses.Metadata](json).toMetadata
   }
