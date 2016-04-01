@@ -23,6 +23,7 @@ case class Action(
    * Polls the action for a completed or errored status, returning the final action value.
    * You can use Future.onError to set a callback if the final state is Errored, or
    * onSuccess if the final status is Completed.
+   *
    * @param client
    * @param ec
    * @return
@@ -33,9 +34,11 @@ case class Action(
       Await.result(Action(id), client.maxWaitPerRequest)
     }
 
-    val completedAction = Iterator.continually(actionRefresh).find(_.isCompleted).get
+    val actionRefreshPoll = Iterator.continually(actionRefresh)
 
-    Future {
+    for {
+      completedAction <- Future(actionRefreshPoll.find(_.isCompleted).get)
+    } yield {
       if (completedAction.status == Action.Errored) {
         throw new ActionErroredException(completedAction)
       } else {

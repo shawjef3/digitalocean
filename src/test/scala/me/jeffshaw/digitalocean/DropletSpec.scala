@@ -18,11 +18,13 @@ class DropletSpec extends Suite with BeforeAndAfterAll {
       droplets <- Droplet.list()
       () = assert(droplets.exists(_.id == droplet.id))
       //Wait for the droplet to become active.
-      _ <- droplet.complete()
+      createComplete <- droplet.complete()
+      () = assertResult(Action.Completed)(createComplete.status)
       () = println(s"Droplet ${droplet.id} is active. Deleting it.")
       //Power it off (not necessary, but we don't have a test for Action.await yet).
       off <- droplet.powerOff()
-      _ <- off.complete
+      offComplete <- off.complete()
+      () = assertResult(Action.Completed)(offComplete.status)
       //Wait 5 seconds for the delete command to return, and then
       //wait for the droplet to stop existing.
       delete <- droplet.delete()
