@@ -9,11 +9,21 @@ import scala.concurrent._
  */
 case class DropletDeletion(dropletId: BigInt) {
   def complete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
-    def existenceCheck: Boolean = {
-      Thread.sleep(client.actionCheckInterval.toMillis)
-      Await.result(Droplet.isDeleted(dropletId), client.actionCheckInterval)
+
+    import DelayedFuture._
+
+    def existenceCheck(): Future[Unit] = {
+      val timeout = client.actionCheckInterval + client.maxWaitPerRequest
+      val whenTimeout = after(timeout)(Future.failed(new TimeoutException()))
+      val whenDelete = after(client.actionCheckInterval)(Droplet.isDeleted(dropletId))
+      val whenDeleteWithoutTimeout = Future.firstCompletedOf(Seq(whenDelete, whenTimeout))
+
+      whenDeleteWithoutTimeout.flatMap {
+        case isDeleted if isDeleted => Future.successful(())
+        case _                      => existenceCheck()
+      }
     }
 
-    Future(Iterator.continually(existenceCheck).contains(true))
+    existenceCheck()
   }
 }
