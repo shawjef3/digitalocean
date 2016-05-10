@@ -24,8 +24,8 @@ case class DigitalOceanClient(
   /**
    * This needs to be used carefully, because it can potentially give
    * the api key to a 3rd party.
-    *
-    * @param req
+   *
+   * @param req
    * @tparam T
    * @return
    */

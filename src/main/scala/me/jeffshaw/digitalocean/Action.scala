@@ -1,7 +1,6 @@
 package me.jeffshaw.digitalocean
 
 import java.time.Instant
-
 import scala.concurrent._
 
 case class Action(
