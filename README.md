@@ -88,7 +88,7 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 ##Changelog
 
 ### 2.2
-* Thanks to [flavienbert](https://github.com/), polling no longer consumes a thread while it's sleeping.
+* Thanks to [flavienbert](https://github.com/flavienbert), polling no longer consumes a thread while it's sleeping.
 * Added upcoming Bangalore1 region.
 * If you were using classes in the package me.jeffshaw.digitalocean.metadata.responses, you shouldn't have been. Those classes are now private.
 
