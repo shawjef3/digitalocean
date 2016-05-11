@@ -18,7 +18,7 @@ http://www.jeffshaw.me/digitalocean/
 This project is now in Maven Central for Scala 2.10 and 2.11. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "2.1"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "2.2"
 ```
 
 Or, for a maven project:
@@ -27,7 +27,7 @@ Or, for a maven project:
 <dependency>
   <groupId>me.jeffshaw</groupId>
   <artifactId>digitalocean_2.11</artifactId>
-  <version>2.1</version>
+  <version>2.2</version>
 </dependency>
 ```
 
@@ -78,7 +78,7 @@ Await.result(droplet.complete(), 2 minutes)
 
 //Run the delete the command, and then wait for the droplet to stop existing.
 
-Await.result(droplet.delete().flatMap(_.complete), 2 minutes)
+Await.result(droplet.delete().flatMap(_.complete()), 2 minutes)
 
 //CTRL-D if you used :paste.
 ```
@@ -86,6 +86,11 @@ Await.result(droplet.delete().flatMap(_.complete), 2 minutes)
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
 
 ##Changelog
+
+### 2.2
+* Thanks to [flavienbert](https://github.com/), polling no longer consumes a thread while it's sleeping.
+* Added upcoming Bangalore1 region.
+* If you were using classes in the package me.jeffshaw.digitalocean.metadata.responses, you shouldn't have been. Those classes are now private.
 
 ### 2.1
 * Fix a bug where polling for action completion occured on the caller's thread.
