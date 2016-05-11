@@ -2,7 +2,7 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "2.2-SNAPSHOT"
+version := "2.2"
 
 libraryDependencies ++= Seq(
 	"net.databinder.dispatch" %% "dispatch-core" % "0.11.3",
