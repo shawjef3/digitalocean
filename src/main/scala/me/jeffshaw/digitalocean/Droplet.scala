@@ -137,6 +137,17 @@ case class Droplet(
   def neighbors()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Droplet]] = {
     Droplet.neighbors(id)
   }
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj match {
+      case that: Droplet =>
+        eq(that) || this.id == that.id
+      case _ =>
+        false
+    }
+  }
+
+  override def hashCode(): Int = id.hashCode()
 }
 
 object Droplet

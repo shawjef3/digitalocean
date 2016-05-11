@@ -12,7 +12,7 @@ import scala.util.Random
 /**
  * Note that these tests randomly fail, because Digital Ocean is slow
  * to update your list of keys that are accessible to the API. This is the
- * reason for all the calls to listUntil(keys => keys.contains(key)).
+ * reason for all the calls to pollKeys(Vector[SshKey] => Boolean).
  * Sometimes even a 30 second wait isn't enough.
  */
 class SshKeySpec extends Suite with BeforeAndAfterAll {
@@ -33,12 +33,6 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
     s"ssh-rsa $key_val Test Ssh Key"
   }
 
-  private def keysCompare(k1: SshKey, k2: SshKey): Boolean = {
-    k1.id == k2.id &&
-      k1.fingerprint == k2.fingerprint &&
-      k1.publicKey == k2.publicKey
-  }
-
   val namePrefix = "ScalaTest"
 
   override protected def afterAll(): Unit = {
@@ -51,26 +45,15 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
   }
 
   /**
-    * Run SshKey.list over and over until some condition is satisfied.
-    *
-    * @param condition
-    * @return
+    * Repeatedly execute SshKey.list() until a predicate is satisfied.
     */
-  def listUntil(condition: Iterator[SshKey] => Boolean): Future[Unit] = {
-    def continue(keys: Iterator[SshKey]): Future[Unit] = {
-      if (condition(keys)) Future.successful(())
-      else {
-        for {
-          _ <- Future(Thread.sleep(client.actionCheckInterval.toMillis))
-          _ <- listUntil(condition)
-        } yield ()
-      }
-    }
-
+  def pollKeys(predicate: Vector[SshKey] => Boolean): Future[Vector[SshKey]] ={
     for {
-      keys <- SshKey.list()
-      _ <- continue(keys)
-    } yield ()
+      keys <- client.poll[Vector[SshKey]](SshKey.list().map(_.toVector), predicate)
+    } yield {
+      assert(predicate(keys))
+      keys
+    }
   }
 
   test("Ssh keys can be created, renamed, listed, and deleted (by Id).") {
@@ -80,19 +63,13 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
 
     val t = for {
       key <- SshKey.create(name, publicKey)
-      _ <- listUntil(keys => keys.contains(key))
-      keys <- SshKey.list()
-      () = assert(keys.contains(key))
+      keys <- pollKeys(_.contains(key))
       newKey <- SshKey.setNameById(key.id, updatedName)
-      _ <- listUntil(keys => keys.exists(_.name == updatedName))
-      keysWithRename <- SshKey.list()
-      () = assert(keysWithRename.contains(newKey))
-      () = assert(!keysWithRename.contains(key))
-      () = assert(keysCompare(key, newKey))
+      keysWithRename <- pollKeys(keys => keys.exists(_.name == updatedName))
+      () = assert(!keysWithRename.exists(_.name == name))
+      () = assert(key == newKey)
       () <- SshKey.deleteById(key.id)
-      _ <- listUntil(keys => ! keys.exists(_.id == key.id))
-      keysAfterDelete <- SshKey.list()
-      () = assert(!keysAfterDelete.contains(newKey))
+      keysAfterDelete <- pollKeys(! _.exists(_.id == key.id))
     } yield ()
 
     Await.result(t, 2 minutes)
@@ -105,19 +82,13 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
 
     val t = for {
       key <- SshKey.create(name, publicKey)
-      _ <- listUntil(_.exists(_.name == name))
-      keys <- SshKey.list()
-      () = assert(keys.contains(key))
+      keys <- pollKeys(_.contains(key))
       newKey <- SshKey.setNameByFingerprint(key.fingerprint, updatedName)
-      _ <- listUntil(_.exists(_.name == updatedName))
-      keysWithRename <- SshKey.list()
-      () = assert(keysWithRename.contains(newKey))
-      () = assert(!keysWithRename.contains(key))
-      () = assert(keysCompare(key, newKey))
-      () <- SshKey.deleteById(key.id)
-      _ <- listUntil(keys => !keys.exists(_.id == key.id))
-      keysAfterDelete <- SshKey.list()
-      () = assert(!keysAfterDelete.contains(newKey))
+      keysWithRename <- pollKeys(keys => keys.exists(_.name == updatedName))
+      () = assert(!keysWithRename.exists(_.name == name))
+      () = assert(key == newKey)
+      () <- SshKey.deleteByFingerprint(key.fingerprint)
+      keysAfterDelete <- pollKeys(! _.exists(_.fingerprint == key.fingerprint))
     } yield ()
 
     Await.result(t, 2 minutes)
@@ -130,18 +101,13 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
 
     val t = for {
       key <- SshKey.create(name, publicKey)
-      () = Thread.sleep(10000)
-      keys <- SshKey.list()
-      () = assert(keys.contains(key))
+      keys <- pollKeys(_.contains(key))
       newKey <- key.setName(updatedName)
-      () = Thread.sleep(60000)
-      keysWithRename <- SshKey.list()
-      () = assert(keysWithRename.contains(newKey))
-      () = assert(!keysWithRename.contains(key))
-      () = assert(keysCompare(key, newKey))
-      () <- SshKey.deleteById(key.id)
-      keysAfterDelete <- SshKey.list()
-      () = assert(!keysAfterDelete.contains(newKey))
+      keysWithRename <- pollKeys(_.exists(_.name == updatedName))
+      () = assert(!keysWithRename.exists(_.name == name))
+      () = assert(key == newKey)
+      () <- newKey.delete()
+      keysAfterDelete <- pollKeys(! _.contains(newKey))
     } yield ()
 
     Await.result(t, 2 minutes)

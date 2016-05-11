@@ -19,6 +19,19 @@ case class Image(
   def delete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
     Image.delete(id)
   }
+
+  override def hashCode(): Int = {
+    id.hashCode()
+  }
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj match {
+      case that: Image =>
+        eq(that) || that.id == this.id
+      case _ =>
+        false
+    }
+  }
 }
 
 object Image

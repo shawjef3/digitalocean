@@ -3,8 +3,10 @@ package me.jeffshaw.digitalocean
 import com.ning.http.client.Response
 import dispatch.Defaults._
 import dispatch._
-import org.json4s._, native._
-
+import java.util.concurrent.TimeoutException
+import org.json4s._
+import native._
+import scala.concurrent.Future
 import scala.concurrent.duration._
 
 /**
@@ -17,7 +19,7 @@ case class DigitalOceanClient(
   private val token: String,
   maxWaitPerRequest: Duration,
   actionCheckInterval: Duration
-) {
+) extends DelayedFuture {
   private val requestPrefix: Req =
     DigitalOceanClient.host.addHeader("Authorization", "Bearer " + token)
 
@@ -112,6 +114,26 @@ case class DigitalOceanClient(
     val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
     val request = Http(createRequest(path = path).setBody(messageBody).PUT)
     parseResponse[T](request)
+  }
+
+  /**
+    * Repeatedly execute a function until a predicate is satisfied, with a delay of
+    * [[actionCheckInterval]] between executions.
+ *
+    * @param pollAction
+    * @param predicate
+    * @tparam T
+    * @return
+    */
+  private[digitalocean] def poll[T](pollAction: => Future[T], predicate: T => Boolean): Future[T] = {
+    val whenTimeout = after(maxWaitPerRequest)(Future.failed(new TimeoutException()))
+    val firstCompleted = Future.firstCompletedOf(Seq(pollAction, whenTimeout))
+    for {
+      result <- firstCompleted
+      completeResult <-
+        if (predicate(result)) Future.successful(result)
+        else sleep(actionCheckInterval).flatMap(_ => poll(pollAction, predicate))
+    } yield completeResult
   }
 }
 

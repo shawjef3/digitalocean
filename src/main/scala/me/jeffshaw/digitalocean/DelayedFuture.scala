@@ -1,23 +1,41 @@
 package me.jeffshaw.digitalocean
 
-import java.util.{TimerTask, Timer}
-
-import scala.concurrent.{Promise, Future}
+import java.io.Closeable
+import java.util.{Timer, TimerTask}
+import scala.concurrent.{Future, Promise}
 import scala.concurrent.duration.Duration
 
-object DelayedFuture {
+/**
+  * Provides methods to run functions after a delay.
+  */
+private[digitalocean] trait DelayedFuture
+  extends Closeable {
 
-  def after[T](duration: Duration)(future: => Future[T]) = {
+  private val timer = new Timer(true)
+
+  protected def after[T](
+    delay: Duration
+  )(future: => Future[T]
+  ): Future[T] = {
     val p = Promise[T]()
 
-    val timer = new Timer(true)
-    timer.schedule(new TimerTask {
-      override def run(): Unit = {
-        p.completeWith(future)
-        timer.cancel()
-      }
-    }, duration.toMillis)
+    timer.schedule(
+      new TimerTask {
+        override def run(): Unit = {
+          p.completeWith(future)
+        }
+      },
+      delay.toMillis
+    )
 
     p.future
   }
+
+  protected def sleep(duration: Duration): Future[Unit] =
+    after(duration)(Future.successful(()))
+
+  override def close(): Unit = {
+    timer.cancel()
+  }
+
 }

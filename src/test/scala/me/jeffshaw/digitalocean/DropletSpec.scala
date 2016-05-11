@@ -25,10 +25,13 @@ class DropletSpec extends Suite with BeforeAndAfterAll {
       off <- droplet.powerOff()
       offComplete <- off.complete()
       () = assertResult(Action.Completed)(offComplete.status)
-      //Wait 5 seconds for the delete command to return, and then
-      //wait for the droplet to stop existing.
+      //Wait for the droplet to stop existing.
       delete <- droplet.delete()
       () <- delete.complete()
+      //Assert that the droplet has no pending actions.
+      actions <- client.poll[Iterator[Action]](droplet.actions(), _.forall(_.status != Action.InProgress))
+      //Assert that the droplet to stop appearing in the droplet list.
+      droplets <- client.poll[Iterator[Droplet]](Droplet.list(), ! _.contains(droplet))
     } yield println("deletion completed")
 
     Await.result(t, 5 minutes)

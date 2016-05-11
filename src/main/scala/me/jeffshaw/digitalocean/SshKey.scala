@@ -16,6 +16,19 @@ case class SshKey(
   def delete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
     SshKey.deleteById(id)
   }
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj match {
+      case that: SshKey =>
+        eq(that) || this.id == that.id
+      case _ =>
+        false
+    }
+  }
+
+  override def hashCode(): Int = {
+    id.hashCode()
+  }
 }
 
 object SshKey

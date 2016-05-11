@@ -1,7 +1,6 @@
 package me.jeffshaw.digitalocean
 
 import java.time.Instant
-import me.jeffshaw.digitalocean.Action.{InProgress, Errored, Completed}
 
 import scala.concurrent._
 
@@ -30,26 +29,27 @@ case class Action(
    * @return
    */
   def complete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-
-    import DelayedFuture._
-
-    def loop(): Future[Action] = {
-      val timeout = client.actionCheckInterval + client.maxWaitPerRequest
-      val whenAction = after(client.actionCheckInterval)(Action(id))
-      val whenTimeout = after(timeout)(Future.failed(new TimeoutException()))
-      val whenActionWithoutTimeout = Future.firstCompletedOf(Seq(whenAction, whenTimeout))
-
-      whenActionWithoutTimeout.flatMap { action =>
-        action.status match {
-          case InProgress => loop()
-          case Completed  => Future.successful(action)
-          case Errored    => Future.failed(new ActionErroredException(action))
-        }
-      }
+    for {
+      result <- client.poll[Action](Action(id), _.status != Action.InProgress)
+    } yield {
+      if (result.status == Action.Errored) throw new ActionErroredException(result)
+      else result
     }
-
-    loop()
   }
+
+  override def equals(obj: scala.Any): Boolean = {
+    obj match {
+      case that: Action =>
+        eq(that) || this.id == that.id
+      case _ =>
+        false
+    }
+  }
+
+  override def hashCode(): Int = {
+    id.hashCode()
+  }
+
 }
 
 object Action extends Path with Listable[Action, responses.Actions] {
