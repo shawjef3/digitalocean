@@ -118,14 +118,18 @@ case class DigitalOceanClient(
 
   /**
     * Repeatedly execute a function until a predicate is satisfied, with a delay of
-    * [[actionCheckInterval]] between executions.
- *
+    * [[actionCheckInterval]] between executions, and a maximum of [[maxWaitPerRequest]]
+    * to wait per execution.
+    *
     * @param pollAction
     * @param predicate
     * @tparam T
     * @return
     */
-  private[digitalocean] def poll[T](pollAction: => Future[T], predicate: T => Boolean): Future[T] = {
+  private[digitalocean] def poll[T](
+    pollAction: => Future[T],
+    predicate: T => Boolean
+  ): Future[T] = {
     val whenTimeout = after(maxWaitPerRequest)(Future.failed(new TimeoutException()))
     val firstCompleted = Future.firstCompletedOf(Seq(pollAction, whenTimeout))
     for {

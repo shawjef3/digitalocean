@@ -24,11 +24,11 @@ class DelayedFutureSpec
   }
 
   test("failure is passed through") {
-    var failed = false
+    val failed = new AtomicBoolean(false)
     val delayed = after[Unit](1 second)(Future.failed(new Exception))
-    delayed.onComplete[Unit](result => failed = result.isFailure)
+    delayed.onComplete[Unit](result => failed.set(result.isFailure))
     Await.ready(delayed, 2 seconds)
-    assert(failed)
+    assert(failed.get())
   }
 
 }
