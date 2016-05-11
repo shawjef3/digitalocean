@@ -27,7 +27,7 @@ class DelayedFutureSpec
     val failed = new AtomicBoolean(false)
     val delayed = after[Unit](1 second)(Future.failed(new Exception))
     delayed.onComplete[Unit](result => failed.set(result.isFailure))
-    Await.ready(delayed, 2 seconds)
+    Thread.sleep(2000)
     assert(failed.get())
   }
 

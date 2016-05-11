@@ -5,7 +5,7 @@ import me.jeffshaw.digitalocean.{NetworkType, RegionEnum, metadata}
 
 package object responses {
 
-  case class Metadata(
+  private[metadata] case class Metadata(
     droplet_id: BigInt,
     hostname: String,
     vendor_data: String,
@@ -29,9 +29,9 @@ package object responses {
     }
   }
 
-  case class Dns(nameservers: Seq[String])
+  private[metadata] case class Dns(nameservers: Seq[String])
 
-  case class Interfaces(
+  private[metadata] case class Interfaces(
     `private`: Seq[Interface],
     public: Seq[Interface]
   ) {
@@ -42,7 +42,7 @@ package object responses {
       )
   }
 
-  case class Interface(
+  private[metadata] case class Interface(
     ipv4: Option[Ipv4],
     anchor_ipv4: Option[Ipv4],
     ipv6: Option[Ipv6],
