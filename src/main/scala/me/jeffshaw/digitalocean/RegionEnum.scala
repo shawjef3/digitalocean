@@ -51,6 +51,10 @@ case object Toronto1 extends RegionEnum {
   override val slug: String = "tor1"
 }
 
+case object Bangalore1 extends RegionEnum {
+  override val slug: String = "blr1"
+}
+
 case class OtherRegion(slug: String) extends RegionEnum
 
 object RegionEnum {
@@ -73,7 +77,8 @@ object RegionEnum {
     NewYork3.slug -> NewYork3,
     Amsterdam3.slug -> Amsterdam3,
     Frankfurt1.slug -> Frankfurt1,
-    Toronto1.slug -> Toronto1
+    Toronto1.slug -> Toronto1,
+    Bangalore1.slug -> Bangalore1
   )
 
   private[digitalocean] case object Serializer extends CustomSerializer[RegionEnum](format =>
@@ -85,6 +90,6 @@ object RegionEnum {
         case regionEnum: RegionEnum =>
           JString(regionEnum.slug)
       }
-      )
+    )
   )
 }
