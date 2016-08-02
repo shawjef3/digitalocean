@@ -87,6 +87,10 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ##Changelog
 
+### 3.0
+* Add support for volumes
+* Action#resourceId is now an Option[BigInt]
+
 ### 2.2
 * Thanks to [flavienbert](https://github.com/flavienbert), polling no longer consumes a thread while it's sleeping.
 * Added upcoming Bangalore1 region.
