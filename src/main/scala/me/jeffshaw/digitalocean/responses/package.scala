@@ -188,4 +188,16 @@ package object responses {
     override val page = floatingIps
   }
 
+  private [digitalocean] case class Volumes(
+    volumes: Seq[digitalocean.Volume],
+    meta: Option[Meta],
+    links: Option[Links]
+  ) extends Page[digitalocean.Volume] {
+    override val page = volumes
+  }
+
+  private [digitalocean] case class Volume(
+    volume: digitalocean.Volume
+  )
+
 }

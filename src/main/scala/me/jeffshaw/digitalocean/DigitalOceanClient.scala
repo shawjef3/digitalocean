@@ -53,7 +53,7 @@ case class DigitalOceanClient(
       response <- request
     } yield {
       if(response.getStatusCode >= 300) {
-        throw new DigitalOceanClientException(response)
+        throw DigitalOceanClientException(response)
       }
     }
   }

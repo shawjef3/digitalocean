@@ -2,7 +2,7 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "2.2"
+version := "3.0"
 
 libraryDependencies ++= Seq(
 	"net.databinder.dispatch" %% "dispatch-core" % "0.11.3",
@@ -14,8 +14,6 @@ libraryDependencies ++= Seq(
 scalaVersion := "2.11.8"
 
 crossScalaVersions := Seq("2.10.6")
-
-mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "2.1") // replace with your old artifact id
 
 licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 

@@ -10,7 +10,7 @@ case class Action(
   `type`: String,
   startedAt: Instant,
   completedAt: Option[Instant],
-  resourceId: BigInt,
+  resourceId: Option[BigInt],
   resourceType: Action.ResourceType,
   region: Region
 ) {

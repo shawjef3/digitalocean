@@ -23,7 +23,8 @@ case class Droplet(
   snapshotIds: Seq[BigInt],
   features: Seq[String],
   nextBackupWindow: BackupWindow,
-  tags: Seq[String]
+  tags: Seq[String],
+  volumeIds: Seq[String]
 ) {
 
   def exists(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
@@ -138,6 +139,30 @@ case class Droplet(
     Droplet.neighbors(id)
   }
 
+  def attach(volumeId: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    Volume.attach(volumeId, id, region)
+  }
+
+  def detach(volumeId: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    Volume.detach(volumeId, id, region)
+  }
+
+  def attach(volume: Volume)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    volume.attach(id)
+  }
+
+  def detach(volume: Volume)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    volume.detach(id)
+  }
+
+  def attachByName(name: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    Volume.attachByName(name, id, region)
+  }
+
+  def detachByName(name: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
+    Volume.detachByName(name, id, region)
+  }
+
   override def equals(obj: scala.Any): Boolean = {
     obj match {
       case that: Droplet =>
@@ -148,6 +173,7 @@ case class Droplet(
   }
 
   override def hashCode(): Int = id.hashCode()
+
 }
 
 object Droplet
