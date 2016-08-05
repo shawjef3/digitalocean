@@ -29,7 +29,7 @@ case class Volume(
   }
 
   def detach(dropletId: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
-    Volume.attach(id, dropletId, region.slug)
+    Volume.detach(id, dropletId, region.slug)
   }
 
   def resize(newSizeGigabytes: Int)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {

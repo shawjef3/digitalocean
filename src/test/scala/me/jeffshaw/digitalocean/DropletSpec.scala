@@ -6,8 +6,6 @@ import scala.util.Random
 
 class DropletSpec extends Suite with BeforeAndAfterAll {
 
-  val dropletNamePrefix = "ScalaTest"
-
   val dropletName = dropletNamePrefix + Random.nextInt()
 
   test("Droplets can be created, listed, and deleted.") {

@@ -22,4 +22,8 @@ abstract class Suite extends FunSuite with Matchers {
 
   implicit val ec = ExecutionContext.global
 
+  val volumeNamePrefix = "scala-test-"
+
+  val dropletNamePrefix = "ScalaTest"
+
 }
