@@ -141,7 +141,7 @@ object Volume
         ("size_gigabytes" -> newSizeGigabytes) ~
         ("region" -> region.slug)
 
-    client.post[Action](path :+ id :+ "actions", message)
+    client.post[responses.Action](path :+ id :+ "actions", message).map(_.action)
   }
 
 }
