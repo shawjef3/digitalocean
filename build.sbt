@@ -15,6 +15,8 @@ scalaVersion := "2.11.8"
 
 crossScalaVersions := Seq("2.10.6")
 
+mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "3.0")
+
 licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 homepage := Some(url("https://github.com/shawjef3/digitalocean"))
@@ -28,6 +30,10 @@ pomExtra := (
     <developer>
       <name>bass3t</name>
       <id>bass3t</id>
+    </developer>
+    <developer>
+      <name>flavienbert</name>
+      <id>flavienbert</id>
     </developer>
   </developers>
   <scm>
