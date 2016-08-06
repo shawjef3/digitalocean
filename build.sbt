@@ -31,6 +31,10 @@ pomExtra := (
       <name>bass3t</name>
       <id>bass3t</id>
     </developer>
+    <developer>
+      <name>flavienbert</name>
+      <id>flavienbert</id>
+    </developer>
   </developers>
   <scm>
     <url>git@github.com:shawjef3/digitalocean.git</url>
