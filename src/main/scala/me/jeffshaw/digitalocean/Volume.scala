@@ -16,6 +16,10 @@ case class Volume(
   createdAt: Instant
 ) {
 
+  def exists(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+    Volume.exists(id)
+  }
+
   def actions()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Action]] = {
     Volume.actions(id)
   }
@@ -24,8 +28,12 @@ case class Volume(
     Volume.attach(id, dropletId, region.slug)
   }
 
-  def delete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
+  def delete()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[VolumeDeletion] = {
     Volume.delete(id)
+  }
+
+  def isDeleted()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+    Volume.isDeleted(id)
   }
 
   def detach(dropletId: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
@@ -73,8 +81,21 @@ object Volume
     } yield response.volume
   }
 
-  def delete(id: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
-    client.delete(path :+ id)
+  def exists(id: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+    val path = this.path :+ id
+    client.exists(path)
+  }
+
+  def isDeleted(id: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+    for {
+      exists <- exists(id)
+    } yield {! exists}
+  }
+
+  def delete(id: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[VolumeDeletion] = {
+    for {
+      () <- client.delete(path :+ id)
+    } yield VolumeDeletion(id)
   }
 
   def deleteByName(name: String, region: RegionEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {

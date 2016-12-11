@@ -8,7 +8,10 @@ libraryDependencies ++= Seq(
   "org.asynchttpclient" % "async-http-client" % "2.0.24",
   "org.json4s" %% "json4s-native" % "3.5.0",
   "com.typesafe" % "config" % "1.3.1" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+  "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.7" % "test",
+  "org.apache.logging.log4j" % "log4j-api" % "2.7" % "test",
+  "org.apache.logging.log4j" % "log4j-core" % "2.7" % "test"
 )
 
 scalaVersion := "2.12.1"

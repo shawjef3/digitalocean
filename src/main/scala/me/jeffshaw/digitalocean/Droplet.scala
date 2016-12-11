@@ -205,7 +205,7 @@ object Droplet
   def delete(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[DropletDeletion] = {
     val path = this.path :+ id.toString
     for {
-     _ <- client.delete(path)
+      () <- client.delete(path)
     } yield {
       DropletDeletion(id)
     }

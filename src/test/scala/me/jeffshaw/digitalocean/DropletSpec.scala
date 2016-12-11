@@ -35,12 +35,7 @@ class DropletSpec extends Suite {
   }
 
   override protected def afterAll(): Unit = {
-    val deletions = for {
-      droplets <- Droplet.list()
-      deletes <- Future.sequence(droplets.filter(_.name.startsWith(dropletNamePrefix)).map(_.delete))
-    } yield deletes
-
-    Await.result(deletions, 3 minutes)
+    Await.result(deleteDroplets(), 3 minutes)
     super.afterAll()
   }
 }

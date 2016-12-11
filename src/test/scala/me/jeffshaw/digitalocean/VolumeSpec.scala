@@ -1,13 +1,11 @@
 package me.jeffshaw.digitalocean
 
-import org.scalatest.BeforeAndAfterAll
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.util.Random
 
 class VolumeSpec
-  extends Suite
-    with BeforeAndAfterAll {
+  extends Suite {
 
   test("volumes can be created and destroyed") {
     val volumeName = volumeNamePrefix + Random.nextInt()
@@ -16,7 +14,8 @@ class VolumeSpec
         v <- Volume.create(1, volumeName, None, NewYork1)
         _ = assertResult(volumeName)(v.name)
         _ = assertResult(1)(v.sizeGigabytes)
-        () <- v.delete()
+        deletion <- v.delete()
+        () <- deletion.complete()
       } yield ()
     Await.result(r, 10 seconds)
   }
@@ -27,10 +26,9 @@ class VolumeSpec
       for {
         v <- Volume.create(1, volumeName, None, NewYork1)
         resizeAction <- v.resize(2)
+        _ <- resizeAction.complete()
         v2 <- Volume(v.id)
-        _ = assertResult(2)(v2.sizeGigabytes)
-        () <- v.delete()
-      } yield ()
+      } yield assertResult(2)(v2.sizeGigabytes)
     Await.result(r, 10 seconds)
   }
 
@@ -46,28 +44,23 @@ class VolumeSpec
         _ <- d.complete()
         action <- d.attach(v)
         actions <- v.actions()
-        _ = assert(actions.contains(action))
-      } yield ()
+      } yield assert(actions.contains(action))
     Await.result(r, 5 minutes)
   }
 
   override protected def afterAll(): Unit = {
-    val deletes = for {
+    val deleteVolumes = for {
       volumes <- Volume.list()
-      testVolumes = volumes.filter(_.name.startsWith(volumeNamePrefix))
+      testVolumes = volumes.toList.filter(_.name.startsWith(volumeNamePrefix))
       detaches <- Future.sequence(testVolumes.flatMap(v => v.dropletIds.map(v.detach)))
       _ <- Future.sequence(detaches.map(_.complete()))
-      deletes <- Future.sequence(testVolumes.map(_.delete()))
+      _ <- Future.sequence(testVolumes.map(_.delete().flatMap(_.complete())))
     } yield ()
 
-    Await.result(deletes, 1 minute)
+    Await.result(deleteVolumes, 1 minute)
+    Await.result(deleteDroplets(), 3 minutes)
 
-    val deletions = for {
-      droplets <- Droplet.list()
-      deletes <- Future.sequence(droplets.filter(_.name.startsWith(dropletNamePrefix)).map(_.delete))
-    } yield deletes
-
-    Await.result(deletions, 3 minutes)
+    super.afterAll()
   }
 
 }

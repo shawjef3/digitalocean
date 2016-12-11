@@ -32,6 +32,13 @@ abstract class Suite
 
   val dropletNamePrefix = "ScalaTest"
 
+  def deleteDroplets(): Future[Iterator[DropletDeletion]] = {
+    for {
+      droplets <- Droplet.list()
+      deletes <- Future.sequence(droplets.filter(_.name.startsWith(dropletNamePrefix)).map(_.delete))
+    } yield deletes
+  }
+
   override protected def afterAll(): Unit = {
     httpClient.close()
   }
