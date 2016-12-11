@@ -7,10 +7,14 @@ import scala.concurrent._
 import duration._
 import org.asynchttpclient.DefaultAsyncHttpClient
 
-abstract class Suite extends FunSuite with Matchers {
-  implicit val httpClient = new DefaultAsyncHttpClient()
+abstract class Suite
+  extends FunSuite
+  with Matchers
+  with BeforeAndAfterAll {
 
   val config = ConfigFactory.load()
+
+  implicit val httpClient = new DefaultAsyncHttpClient()
 
   implicit val client = DigitalOceanClient(
     token = config.getString("digital_ocean_api_token"),
@@ -27,5 +31,9 @@ abstract class Suite extends FunSuite with Matchers {
   val volumeNamePrefix = "scala-test-"
 
   val dropletNamePrefix = "ScalaTest"
+
+  override protected def afterAll(): Unit = {
+    httpClient.close()
+  }
 
 }
