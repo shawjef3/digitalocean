@@ -28,7 +28,6 @@ case class Domain(
     } yield {
       PagedResponse[responses.DomainRecordFields, responses.DomainRecords](
         client,
-        ec,
         response
       )
     }

@@ -1,6 +1,6 @@
 package me.jeffshaw.digitalocean
 
-import com.ning.http.client.Response
+import org.asynchttpclient.Response
 
 case class DigitalOceanClientException(response: Response)
   extends Exception(response.getResponseBody)

@@ -14,8 +14,8 @@ class VolumeSpec
     val r =
       for {
         v <- Volume.create(1, volumeName, None, NewYork1)
-        () = assertResult(volumeName)(v.name)
-        () = assertResult(1)(v.sizeGigabytes)
+        _ = assertResult(volumeName)(v.name)
+        _ = assertResult(1)(v.sizeGigabytes)
         () <- v.delete()
       } yield ()
     Await.result(r, 10 seconds)
@@ -28,7 +28,7 @@ class VolumeSpec
         v <- Volume.create(1, volumeName, None, NewYork1)
         resizeAction <- v.resize(2)
         v2 <- Volume(v.id)
-        () = assertResult(2)(v2.sizeGigabytes)
+        _ = assertResult(2)(v2.sizeGigabytes)
         () <- v.delete()
       } yield ()
     Await.result(r, 10 seconds)
@@ -46,7 +46,7 @@ class VolumeSpec
         _ <- d.complete()
         action <- d.attach(v)
         actions <- v.actions()
-        () = assert(actions.contains(action))
+        _ = assert(actions.contains(action))
       } yield ()
     Await.result(r, 5 minutes)
   }

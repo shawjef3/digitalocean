@@ -1,13 +1,16 @@
 package me.jeffshaw.digitalocean
 package responses
 
+import me.jeffshaw.digitalocean.ToFuture._
+import org.asynchttpclient.RequestBuilder
 import scala.concurrent._
 
 private[digitalocean] case class PagedResponse[T, P <: responses.Page[T]] (
   client: DigitalOceanClient,
-  implicit val ec: ExecutionContext,
   current: P
-)(implicit mf: Manifest[P]) extends Iterable[T] {
+)(implicit val ec: ExecutionContext,
+  mf: Manifest[P]
+) extends Iterable[T] {
 
   private def next: Option[Future[PagedResponse[T, P]]] = {
     for {
@@ -15,11 +18,11 @@ private[digitalocean] case class PagedResponse[T, P <: responses.Page[T]] (
       pages <- links.pages
       nextPageUrl <- pages.next
     } yield {
-        val nextPageRequest = dispatch.url(nextPageUrl).GET
+        val nextPageRequest = new RequestBuilder("GET").setUrl(nextPageUrl).build()
         for {
           response <- client.customRequest[P](nextPageRequest)
         } yield {
-          PagedResponse[T, P](client, ec, response)
+          PagedResponse[T, P](client, response)
         }
     }
   }

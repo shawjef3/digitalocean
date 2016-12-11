@@ -38,7 +38,6 @@ object Listable {
     } yield {
       PagedResponse[T, P](
         client,
-        ec,
         response
       )
     }
@@ -60,7 +59,6 @@ object Listable {
     } yield {
       PagedResponse[T, P](
         client,
-        ec,
         response
       )
     }

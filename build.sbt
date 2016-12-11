@@ -2,18 +2,18 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "3.0"
+version := "4.0"
 
 libraryDependencies ++= Seq(
-	"net.databinder.dispatch" %% "dispatch-core" % "0.11.3",
-	"org.json4s" %% "json4s-native" % "3.3.0",
-	"com.typesafe" % "config" % "1.2.1" % "test",
-	"org.scalatest" %% "scalatest" % "2.2.5" % "test"
+  "org.asynchttpclient" % "async-http-client" % "2.0.24",
+  "org.json4s" %% "json4s-native" % "3.5.0",
+  "com.typesafe" % "config" % "1.3.1" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 )
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.0"
 
-crossScalaVersions := Seq("2.10.6")
+crossScalaVersions := Seq("2.11.8", "2.10.6")
 
 mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "3.0")
 

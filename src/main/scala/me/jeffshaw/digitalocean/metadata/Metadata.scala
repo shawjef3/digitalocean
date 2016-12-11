@@ -1,7 +1,8 @@
 package me.jeffshaw.digitalocean.metadata
 
-import dispatch.Http
 import me.jeffshaw.digitalocean.RegionEnum
+import me.jeffshaw.digitalocean.ToFuture._
+import org.asynchttpclient.{AsyncHttpClient, RequestBuilder}
 import org.json4s.Extraction
 import org.json4s.native.JsonMethods
 import scala.concurrent.{ExecutionContext, Future}
@@ -25,11 +26,11 @@ object Metadata {
     Extraction.extract[responses.Metadata](json).toMetadata
   }
 
-  def apply()(implicit ec: ExecutionContext): Future[Metadata] = {
+  def apply()(implicit client: AsyncHttpClient, ec: ExecutionContext): Future[Metadata] = {
     for {
-      response <- Http(endpoint GET)
+      response <- client.executeRequest(endpoint)
     } yield Metadata(response.getResponseBody)
   }
 
-  val endpoint = dispatch.host("169.254.169.254") / "metadata" / "v1.json"
+  val endpoint = new RequestBuilder("GET").setUrl("http://169.254.169.254/metadata/v1.json").build()
 }

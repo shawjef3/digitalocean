@@ -2,6 +2,7 @@ package me.jeffshaw.digitalocean.metadata
 
 import java.net._
 import me.jeffshaw.digitalocean._
+import scala.io.Source
 
 class MetadataSpec extends Suite {
 
@@ -9,7 +10,7 @@ class MetadataSpec extends Suite {
     /**
       * https://developers.digitalocean.com/metadata/#metadata-in-json
       */
-    val metadata = Metadata(io.Source.fromInputStream(getClass.getResourceAsStream("example.json")).getLines.mkString)
+    val metadata = Metadata(Source.fromInputStream(getClass.getResourceAsStream("example.json")).getLines.mkString)
 
     assertResult(metadata.dropletId)(BigInt(1))
     assertResult(metadata.hostname)("www.jeffshaw.me")

@@ -1,12 +1,12 @@
 package me.jeffshaw.digitalocean
 
-import com.ning.http.client.Response
-import dispatch.Defaults._
-import dispatch._
 import java.util.concurrent.TimeoutException
+import me.jeffshaw.digitalocean.ToFuture._
+import org.asynchttpclient.{AsyncHttpClient, Request, RequestBuilder, Response}
 import org.json4s._
-import native._
-import scala.concurrent.Future
+import org.json4s.native._
+import scala.concurrent.{ExecutionContext, Future}
+import scala.collection.JavaConverters._
 import scala.concurrent.duration._
 
 /**
@@ -19,9 +19,12 @@ case class DigitalOceanClient(
   private val token: String,
   maxWaitPerRequest: Duration,
   actionCheckInterval: Duration
+)(implicit client: AsyncHttpClient
 ) extends DelayedFuture {
-  private val requestPrefix: Req =
-    DigitalOceanClient.host.addHeader("Authorization", "Bearer " + token)
+  private val requestPrefix: Request =
+    new RequestBuilder(DigitalOceanClient.host).
+      addHeader("Authorization", "Bearer " + token).
+      build()
 
   /**
    * This needs to be used carefully, because it can potentially give
@@ -31,26 +34,37 @@ case class DigitalOceanClient(
    * @tparam T
    * @return
    */
-  private[digitalocean] def customRequest[T: Manifest](req: Req): Future[T] = {
-    parseResponse[T](Http(req.addHeader("Authorization", "Bearer " + token)))
+  private[digitalocean] def customRequest[T: Manifest](
+    req: Request
+  )(implicit ec: ExecutionContext
+  ): Future[T] = {
+    val request =
+      new RequestBuilder(req).addHeader("Authorization", "Bearer " + token)
+    parseResponse[T](client.executeRequest(request))
   }
 
   def createRequest(
     path: Seq[String],
     queryParameters: Map[String, Seq[String]] = Map.empty
-  ): Req = {
-    path.foldLeft(requestPrefix)((accum, pathElement) => accum / pathElement).
-      setQueryParameters(queryParameters)
+  ): RequestBuilder = {
+    val javaQueryParameters = {
+      for ((key, value) <- queryParameters) yield
+        key -> value.asJava
+    }.asJava
+    new RequestBuilder(requestPrefix).setUrl(
+        requestPrefix.getUrl + path.mkString("/", "/", "")
+      ).setQueryParams(javaQueryParameters)
   }
 
   def delete(
     path: Seq[String],
     queryParameters: Map[String, Seq[String]] = Map.empty
+  )(implicit ec: ExecutionContext
   ): Future[Unit] = {
-    val request = Http(createRequest(path, queryParameters) DELETE)
+    val request = createRequest(path, queryParameters).setMethod("DELETE")
 
     for {
-      response <- request
+      response <- client.executeRequest(request)
     } yield {
       if(response.getStatusCode >= 300) {
         throw DigitalOceanClientException(response)
@@ -58,7 +72,10 @@ case class DigitalOceanClient(
     }
   }
 
-  def parseResponse[T: Manifest](request: Future[Response]): Future[T] = {
+  private def parseResponse[T: Manifest](
+    request: Future[Response]
+  )(implicit ec: ExecutionContext
+  ): Future[T] = {
     for {
       response <- request
     } yield {
@@ -79,16 +96,18 @@ case class DigitalOceanClient(
   def get[T: Manifest](
     path: Seq[String],
     queryParameters: Map[String, Seq[String]] = Map.empty
+  )(implicit ec: ExecutionContext
   ): Future[T] = {
-    val request = Http(createRequest(path, queryParameters) GET)
+    val request = client.executeRequest(createRequest(path, queryParameters).setMethod("GET"))
     parseResponse[T](request)
   }
 
   def exists(
     path: Seq[String],
     queryParameters: Map[String, Seq[String]] = Map.empty
+  )(implicit ec: ExecutionContext
   ): Future[Boolean] = {
-    val request = Http(createRequest(path, queryParameters) HEAD)
+    val request = client.executeRequest(createRequest(path, queryParameters).setMethod("HEAD"))
     for {
       response <- request
     } yield {
@@ -100,9 +119,10 @@ case class DigitalOceanClient(
     path: Seq[String],
     message: JValue,
     queryParameters: Map[String, Seq[String]] = Map.empty
+  )(implicit ec: ExecutionContext
   ): Future[T] = {
     val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
-    val request = Http(createRequest(path = path).setBody(messageBody).POST)
+    val request = client.executeRequest(createRequest(path = path).setBody(messageBody).setMethod("POST"))
     parseResponse[T](request)
   }
 
@@ -110,9 +130,10 @@ case class DigitalOceanClient(
     path: Seq[String],
     message: JValue,
     queryParameters: Map[String, Seq[String]] = Map.empty
+  )(implicit ec: ExecutionContext
   ): Future[T] = {
     val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
-    val request = Http(createRequest(path = path).setBody(messageBody).PUT)
+    val request = client.executeRequest(createRequest(path = path).setBody(messageBody).setMethod("PUT"))
     parseResponse[T](request)
   }
 
@@ -129,6 +150,7 @@ case class DigitalOceanClient(
   private[digitalocean] def poll[T](
     pollAction: => Future[T],
     predicate: T => Boolean
+  )(implicit ec: ExecutionContext
   ): Future[T] = {
     val whenTimeout = after(maxWaitPerRequest)(Future.failed(new TimeoutException()))
     val firstCompleted = Future.firstCompletedOf(Seq(pollAction, whenTimeout))
@@ -142,7 +164,11 @@ case class DigitalOceanClient(
 }
 
 object DigitalOceanClient {
-  val host = dispatch.host("api.digitalocean.com").secure.setContentType("application/json", "utf-8") / "v2"
-
   val contentType = "application/json; charset=utf-8"
+
+  val host =
+    new RequestBuilder().
+      setUrl("https://api.digitalocean.com/v2").
+      addHeader("Content-Type", contentType).
+      build()
 }

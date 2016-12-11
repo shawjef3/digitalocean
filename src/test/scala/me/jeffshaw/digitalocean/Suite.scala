@@ -1,13 +1,15 @@
 package me.jeffshaw.digitalocean
 
 import java.util.concurrent.TimeUnit
-
 import com.typesafe.config.ConfigFactory
 import org.scalatest._
-
-import scala.concurrent._, duration._
+import scala.concurrent._
+import duration._
+import org.asynchttpclient.DefaultAsyncHttpClient
 
 abstract class Suite extends FunSuite with Matchers {
+  implicit val httpClient = new DefaultAsyncHttpClient()
+
   val config = ConfigFactory.load()
 
   implicit val client = DigitalOceanClient(

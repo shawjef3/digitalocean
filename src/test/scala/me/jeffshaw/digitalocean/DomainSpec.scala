@@ -15,7 +15,7 @@ class DomainSpec extends Suite with BeforeAndAfterAll {
     val t = for {
       domain <- Domain.create(domainName, "10.0.0.1")
       domains <- Domain.list()
-      () = assert(domains.exists(_.name == domainName))
+      _ = assert(domains.exists(_.name == domainName))
       () <- domain.delete()
     } yield ()
 
@@ -28,10 +28,10 @@ class DomainSpec extends Suite with BeforeAndAfterAll {
       domain <- Domain.create(domainName, "10.0.0.1")
       aRecord <- domain.createA("host." + domainName + ".", "10.0.0.1")
       allRecords <- domain.records()
-      () = assert(allRecords.contains(aRecord))
+      _ = assert(allRecords.contains(aRecord))
       () <- aRecord.delete()
       allWithoutARecord <- domain.records()
-      () = assert(! allRecords.contains(aRecord))
+      _ = assert(! allRecords.contains(aRecord))
       () <- domain.delete()
     } yield ()
 

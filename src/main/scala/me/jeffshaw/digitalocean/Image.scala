@@ -73,7 +73,6 @@ object Image
     } yield {
       PagedResponse[Image, responses.Images](
         client,
-        ec,
         response
       )
     }
