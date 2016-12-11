@@ -15,10 +15,10 @@ http://www.jeffshaw.me/digitalocean/
 
 ###Dependency
 
-This project is now in Maven Central for Scala 2.10 and 2.11. You can add it to your dependencies in your project's sbt file.
+This project is now in Maven Central for Scala 2.10, 2.11, and 2.12. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "3.0"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "4.0"
 ```
 
 Or, for a maven project:
@@ -26,8 +26,8 @@ Or, for a maven project:
 ```xml
 <dependency>
   <groupId>me.jeffshaw</groupId>
-  <artifactId>digitalocean_2.11</artifactId>
-  <version>3.0</version>
+  <artifactId>digitalocean_2.12</artifactId>
+  <version>4.0</version>
 </dependency>
 ```
 
@@ -43,6 +43,9 @@ console
 
 import scala.concurrent._, duration._, ExecutionContext.Implicits._
 import me.jeffshaw.digitalocean._
+import org.asynchttpclient.DefaultAsyncHttpClient
+
+implicit val httpClient = new DefaultAsyncHttpClient()
 
 implicit val client = DigitalOceanClient(
   token = "",
@@ -86,6 +89,10 @@ Await.result(droplet.delete().flatMap(_.complete()), 2 minutes)
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
 
 ##Changelog
+
+### 4.0
+* Add support for Scala 2.12
+* Remove dispatch, since it is not published for Scala 2.12
 
 ### 3.0
 * Add support for volumes
