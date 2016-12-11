@@ -18,12 +18,19 @@ private[digitalocean] case class PagedResponse[T, P <: responses.Page[T]] (
       pages <- links.pages
       nextPageUrl <- pages.next
     } yield {
-        val nextPageRequest = new RequestBuilder("GET").setUrl(nextPageUrl).build()
-        for {
-          response <- client.customRequest[P](nextPageRequest)
-        } yield {
-          PagedResponse[T, P](client, response)
-        }
+      //Avoid a redirect.
+      val secure =
+        if (nextPageUrl.startsWith("http://")) {
+          val builder = new StringBuilder(nextPageUrl)
+          builder.insert(4, 's').toString
+        } else nextPageUrl
+
+      val nextPageRequest = new RequestBuilder("GET").setUrl(secure).build()
+      for {
+        response <- client.customRequest[P](nextPageRequest)
+      } yield {
+        PagedResponse[T, P](client, response)
+      }
     }
   }
 

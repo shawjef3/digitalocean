@@ -51,9 +51,8 @@ case class DigitalOceanClient(
       for ((key, value) <- queryParameters) yield
         key -> value.asJava
     }.asJava
-    new RequestBuilder(requestPrefix).setUrl(
-        requestPrefix.getUrl + path.mkString("/", "/", "")
-      ).setQueryParams(javaQueryParameters)
+    val url = requestPrefix.getUrl + path.mkString("/", "/", "")
+    new RequestBuilder(requestPrefix).setUrl(url).setQueryParams(javaQueryParameters)
   }
 
   def delete(
