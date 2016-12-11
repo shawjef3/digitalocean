@@ -1,10 +1,9 @@
 package me.jeffshaw.digitalocean
 
-import org.scalatest.BeforeAndAfterAll
 import scala.concurrent._, duration._
 import scala.util.Random
 
-class DropletSpec extends Suite with BeforeAndAfterAll {
+class DropletSpec extends Suite {
 
   val dropletName = dropletNamePrefix + Random.nextInt()
 
@@ -42,5 +41,6 @@ class DropletSpec extends Suite with BeforeAndAfterAll {
     } yield deletes
 
     Await.result(deletions, 3 minutes)
+    super.afterAll()
   }
 }

@@ -4,7 +4,6 @@ import java.io.{ByteArrayOutputStream, DataOutputStream}
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPublicKey
 import java.util.Base64
-import org.scalatest.BeforeAndAfterAll
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util.Random
@@ -15,7 +14,7 @@ import scala.util.Random
  * reason for all the calls to pollKeys(Vector[SshKey] => Boolean).
  * Sometimes even a 30 second wait isn't enough.
  */
-class SshKeySpec extends Suite with BeforeAndAfterAll {
+class SshKeySpec extends Suite {
   private def genPK = {
     val kpg = KeyPairGenerator.getInstance("RSA")
     kpg.initialize(512)
@@ -42,6 +41,7 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
     } yield deletions
 
     Await.result(cleanup, 10 seconds)
+    super.afterAll()
   }
 
   /**
@@ -72,7 +72,7 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
       keysAfterDelete <- pollKeys(! _.exists(_.id == key.id))
     } yield ()
 
-    Await.result(t, 2 minutes)
+    Await.result(t, 5 minutes)
   }
 
   test("Ssh keys can be created, renamed, listed, and deleted (by fingerprint).") {
@@ -91,7 +91,7 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
       keysAfterDelete <- pollKeys(! _.exists(_.fingerprint == key.fingerprint))
     } yield ()
 
-    Await.result(t, 2 minutes)
+    Await.result(t, 5 minutes)
   }
 
   test("Ssh keys can be created, renamed, and deleted (native).") {
@@ -110,6 +110,6 @@ class SshKeySpec extends Suite with BeforeAndAfterAll {
       keysAfterDelete <- pollKeys(! _.contains(newKey))
     } yield ()
 
-    Await.result(t, 2 minutes)
+    Await.result(t, 5 minutes)
   }
 }

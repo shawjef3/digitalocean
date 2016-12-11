@@ -6,7 +6,7 @@ import org.scalatest.BeforeAndAfterAll
 import concurrent._, duration._
 import scala.util.Random
 
-class DomainSpec extends Suite with BeforeAndAfterAll {
+class DomainSpec extends Suite {
 
   val domainName = "scalatest" + Random.nextInt() + ".com"
 
@@ -40,5 +40,6 @@ class DomainSpec extends Suite with BeforeAndAfterAll {
 
   override protected def afterAll(): Unit = {
     scala.util.Try(Domain.delete(domainName))
+    super.afterAll()
   }
 }
