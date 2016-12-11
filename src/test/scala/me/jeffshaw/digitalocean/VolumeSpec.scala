@@ -16,6 +16,7 @@ class VolumeSpec
         _ = assertResult(1)(v.sizeGigabytes)
         deletion <- v.delete()
         () <- deletion.complete()
+        volumes <- client.poll[Iterator[Volume]](Volume.list(), ! _.contains(v))
       } yield ()
     Await.result(r, 10 seconds)
   }
