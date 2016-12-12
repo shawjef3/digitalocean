@@ -1,6 +1,6 @@
 package me.jeffshaw.digitalocean
 
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.Random
 
@@ -18,7 +18,7 @@ class VolumeSpec
         () <- deletion.complete()
         volumes <- client.poll[Iterator[Volume]](Volume.list(), ! _.contains(v))
       } yield ()
-    Await.result(r, 10 seconds)
+    Await.result(r, 30 seconds)
   }
 
   test("volumes can be resized") {
@@ -30,7 +30,7 @@ class VolumeSpec
         _ <- resizeAction.complete()
         v2 <- Volume(v.id)
       } yield assertResult(2)(v2.sizeGigabytes)
-    Await.result(r, 10 seconds)
+    Await.result(r, 30 seconds)
   }
 
   test("actions can be listed") {
@@ -44,22 +44,20 @@ class VolumeSpec
         d <- Droplet.create(dropletName, NewYork1, size, testImageSlug, Seq.empty, false, false, false, None)
         _ <- d.complete()
         action <- d.attach(v)
-        actions <- v.actions()
-      } yield assert(actions.contains(action))
+        actions <- client.poll[Seq[Action]](v.actions().map(_.toList), _.contains(action))
+      } yield ()
     Await.result(r, 5 minutes)
   }
 
   override protected def afterAll(): Unit = {
-    val deleteVolumes = for {
-      volumes <- Volume.list()
-      testVolumes = volumes.toList.filter(_.name.startsWith(volumeNamePrefix))
-      detaches <- Future.sequence(testVolumes.flatMap(v => v.dropletIds.map(v.detach)))
-      _ <- Future.sequence(detaches.map(_.complete()))
-      _ <- Future.sequence(testVolumes.map(_.delete().flatMap(_.complete())))
-    } yield ()
-
-    Await.result(deleteVolumes, 1 minute)
     Await.result(deleteDroplets(), 3 minutes)
+
+    val volumes =
+      Await.result(listVolumes(), 3 minutes)
+
+    for {
+      volume <- volumes
+    } yield util.Try(Await.result(volume.delete(), 20 seconds))
 
     super.afterAll()
   }

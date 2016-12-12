@@ -72,7 +72,7 @@ class SshKeySpec extends Suite {
       keysAfterDelete <- pollKeys(! _.exists(_.id == key.id))
     } yield ()
 
-    Await.result(t, 5 minutes)
+    Await.result(t, 10 minutes)
   }
 
   test("Ssh keys can be created, renamed, listed, and deleted (by fingerprint).") {
@@ -91,7 +91,7 @@ class SshKeySpec extends Suite {
       keysAfterDelete <- pollKeys(! _.exists(_.fingerprint == key.fingerprint))
     } yield ()
 
-    Await.result(t, 5 minutes)
+    Await.result(t, 10 minutes)
   }
 
   test("Ssh keys can be created, renamed, and deleted (native).") {
@@ -110,6 +110,6 @@ class SshKeySpec extends Suite {
       keysAfterDelete <- pollKeys(! _.contains(newKey))
     } yield ()
 
-    Await.result(t, 5 minutes)
+    Await.result(t, 10 minutes)
   }
 }

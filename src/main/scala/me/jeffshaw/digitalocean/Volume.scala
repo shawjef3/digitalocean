@@ -16,7 +16,7 @@ case class Volume(
   createdAt: Instant
 ) {
 
-  def exists(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
+  def exists()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
     Volume.exists(id)
   }
 
@@ -38,6 +38,10 @@ case class Volume(
 
   def detach(dropletId: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {
     Volume.detach(id, dropletId, region.slug)
+  }
+
+  def detachAll()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Seq[Action]] = {
+    Future.sequence(dropletIds.map(detach))
   }
 
   def resize(newSizeGigabytes: Int)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {

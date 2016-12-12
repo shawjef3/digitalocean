@@ -19,6 +19,9 @@ case class Action(
     status != Action.InProgress
   }
 
+  def refresh()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] =
+    Action(id)
+
   /**
    * Polls the action for a completed or errored status, returning the final action value.
    * You can use Future.onError to set a callback if the final state is Errored, or

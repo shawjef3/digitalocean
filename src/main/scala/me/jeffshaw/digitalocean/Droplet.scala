@@ -163,6 +163,10 @@ case class Droplet(
     Volume.detachByName(name, id, region)
   }
 
+  def refresh()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
+   Droplet(id)
+  }
+
   override def equals(obj: scala.Any): Boolean = {
     obj match {
       case that: Droplet =>
