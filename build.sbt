@@ -18,7 +18,9 @@ scalaVersion := "2.12.1"
 
 crossScalaVersions := Seq("2.11.8", "2.10.6")
 
-mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "3.0")
+mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "4.0")
+
+parallelExecution := false
 
 licenses := Seq("Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
