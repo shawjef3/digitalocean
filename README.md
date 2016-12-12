@@ -64,7 +64,7 @@ val droplet =
       name = "test",
       region = NewYork2,
       size = `512mb`,
-      image = "centos-5-8-x32",
+      image = "centos-5-x32",
       sshKeys = Seq.empty,
       backups = false,
       ipv6 = false,
@@ -83,6 +83,8 @@ Await.result(droplet.complete(), 2 minutes)
 
 Await.result(droplet.delete().flatMap(_.complete()), 2 minutes)
 
+httpClient.close()
+
 //CTRL-D if you used :paste.
 ```
 
@@ -92,7 +94,10 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 
 ### 4.0
 * Add support for Scala 2.12
-* Remove dispatch, since it is not published for Scala 2.12
+* Remove [dispatch](http://dispatch.databinder.net/Dispatch.html), since it is not published for Scala 2.12
+* The client now requires an implicit AsyncHttpClient
+* Add refresh() method to Action, Droplet, and Volume
+* Add sfo2 region, and various new droplet sizes
 
 ### 3.0
 * Add support for volumes
