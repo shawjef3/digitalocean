@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
 
 scalaVersion := "2.12.3"
 
-crossScalaVersions := Seq("2.11.8", "2.10.6")
+crossScalaVersions := Seq("2.11.11", "2.10.6")
 
 mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "4.0")
 
