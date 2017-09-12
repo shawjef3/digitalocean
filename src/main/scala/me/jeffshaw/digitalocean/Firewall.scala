@@ -291,7 +291,7 @@ object Firewall extends Path with Listable[Firewall, responses.Firewalls] {
     )
   }
 
-  case class Source private (
+  case class Source(
     addresses: Seq[Source.Address] = Seq(),
     dropletIds: Seq[BigInt] = Seq(),
     loadBalancerUids: Seq[String] = Seq(),
