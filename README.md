@@ -55,16 +55,16 @@ implicit val client = DigitalOceanClient(
 )
 
 //List all the regions.
-val regions = Await.result(Region.list(), 5 seconds)
+val regions = Await.result(Region.list(), 5 seconds).toVector
 
-//Create a small CentOS 5.8 32-bit droplet.
+//Create a small CentOS 6 32-bit droplet.
 val droplet =
   Await.result(
     Droplet.create(
       name = "test",
-      region = NewYork2,
+      region = NewYork1,
       size = `512mb`,
-      image = "centos-5-x32",
+      image = "centos-6-x32",
       sshKeys = Seq.empty,
       backups = false,
       ipv6 = false,
