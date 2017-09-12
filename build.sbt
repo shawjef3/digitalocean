@@ -2,19 +2,19 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "4.0"
+version := "5.0"
 
 libraryDependencies ++= Seq(
-  "org.asynchttpclient" % "async-http-client" % "2.0.24",
-  "org.json4s" %% "json4s-native" % "3.5.0",
+  "org.asynchttpclient" % "async-http-client" % "2.0.35",
+  "org.json4s" %% "json4s-native" % "3.5.3",
   "com.typesafe" % "config" % "1.3.1" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-  "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.7" % "test",
-  "org.apache.logging.log4j" % "log4j-api" % "2.7" % "test",
-  "org.apache.logging.log4j" % "log4j-core" % "2.7" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.4" % "test",
+  "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.0" % "test",
+  "org.apache.logging.log4j" % "log4j-api" % "2.9.0" % "test",
+  "org.apache.logging.log4j" % "log4j-core" % "2.9.0" % "test"
 )
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.3"
 
 crossScalaVersions := Seq("2.11.8", "2.10.6")
 

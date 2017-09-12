@@ -57,15 +57,23 @@ case class DigitalOceanClient(
 
   def delete(
     path: Seq[String],
+    maybeMessage: Option[JValue] = None,
     queryParameters: Map[String, Seq[String]] = Map.empty
   )(implicit ec: ExecutionContext
   ): Future[Unit] = {
     val request = createRequest(path, queryParameters).setMethod("DELETE")
 
     for {
+      message <- maybeMessage
+    } {
+      val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
+      request.setBody(messageBody)
+    }
+
+    for {
       response <- client.executeRequest(request)
     } yield {
-      if(response.getStatusCode >= 300) {
+      if (response.getStatusCode >= 300) {
         throw DigitalOceanClientException(response)
       }
     }
@@ -123,6 +131,24 @@ case class DigitalOceanClient(
     val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
     val request = client.executeRequest(createRequest(path = path).setBody(messageBody).setMethod("POST"))
     parseResponse[T](request)
+  }
+
+  def postWithEmptyResponse(
+    path: Seq[String],
+    message: JValue,
+    queryParameters: Map[String, Seq[String]] = Map.empty
+  )(implicit ec: ExecutionContext
+  ): Future[Unit] = {
+    val messageBody = JsonMethods.compact(JsonMethods.render(message.snakizeKeys))
+    val request = client.executeRequest(createRequest(path = path).setBody(messageBody).setMethod("POST"))
+
+    for {
+      response <- request
+    } yield {
+      if (response.getStatusCode != 204) {
+        throw DigitalOceanClientException(response)
+      }
+    }
   }
 
   def put[T: Manifest](

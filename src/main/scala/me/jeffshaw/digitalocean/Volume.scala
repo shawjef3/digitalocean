@@ -107,7 +107,7 @@ object Volume
       "name" -> Seq(name),
       "region" -> Seq(region.slug)
     )
-    client.delete(path, parameters)
+    client.delete(path, queryParameters = parameters)
   }
 
   def attach(id: String, dropletId: BigInt, region: RegionEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Action] = {

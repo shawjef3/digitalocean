@@ -32,6 +32,8 @@ abstract class Suite
 
   val dropletNamePrefix = "ScalaTest"
 
+  val firewallNamePrefix = volumeNamePrefix
+
   def listDroplets(): Future[List[Droplet]] = {
     for {
       droplets <- Droplet.list()
@@ -57,6 +59,12 @@ abstract class Suite
     for {
       volumes <- Volume.list()
     } yield volumes.toList.filter(_.name.startsWith(volumeNamePrefix))
+  }
+
+  def listFirewalls(): Future[List[Firewall]] = {
+    for {
+      firewalls <- Firewall.list()
+    } yield firewalls.toList.filter(_.name.startsWith(firewallNamePrefix))
   }
 
   override protected def afterAll(): Unit = {

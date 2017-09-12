@@ -216,7 +216,7 @@ object Droplet
   }
 
   def delete(tag: String)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
-    client.delete(path, Map("tag_name" -> Seq(tag)))
+    client.delete(path, queryParameters = Map("tag_name" -> Seq(tag)))
   }
 
   def kernels(id: BigInt)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Iterator[Kernel]] = {
