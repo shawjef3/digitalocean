@@ -376,4 +376,12 @@ package object responses {
     firewall: Firewall
   )
 
+  private[digitalocean] case class Tag(
+    tag: digitalocean.Tag
+  )
+
+  private [digitalocean] case class Tags(
+    tags: Seq[digitalocean.Tag]
+  )
+
 }

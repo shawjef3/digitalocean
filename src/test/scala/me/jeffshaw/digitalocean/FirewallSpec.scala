@@ -7,8 +7,10 @@ import scala.concurrent.duration._
 
 class FirewallSpec extends Suite {
 
+  val randomSuffix = Random.nextInt().toString
+
   test("create, update") {
-    val name = firewallNamePrefix + Random.nextInt()
+    val name = firewallNamePrefix + randomSuffix
     val inboundRule = Firewall.InboundRule(
       protocol = Firewall.Protocol.Tcp(Firewall.Port.Range(1, 2)),
       sources = Firewall.Source(addresses = Seq(Firewall.Source.Address(InetAddress.getByName("1.1.1.1"), cidr = Some(8))))
@@ -22,14 +24,15 @@ class FirewallSpec extends Suite {
     assert(firewall.tags.isEmpty)
     assert(firewall.dropletIds.isEmpty)
 
-
     val outboundRule =
       Firewall.OutboundRule(
         protocol = Firewall.Protocol.Icmp,
         destinations = Firewall.Destination(
-          tags = Seq("hi")
+          tags = Seq(name)
         )
       )
+
+    val tag = Await.result(Tag.create(name), 10 seconds)
 
     val updated =
       Await.result(
@@ -42,6 +45,7 @@ class FirewallSpec extends Suite {
 
     assert(updated.inboundRules.isEmpty)
     assertResult(Seq(outboundRule))(updated.outboundRules)
+    Await.result(tag.delete(), 10 seconds)
   }
 
   override protected def afterAll(): Unit = {

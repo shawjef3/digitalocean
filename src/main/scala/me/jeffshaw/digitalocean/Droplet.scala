@@ -164,7 +164,7 @@ case class Droplet(
   }
 
   def refresh()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Droplet] = {
-   Droplet(id)
+    Droplet(id)
   }
 
   override def equals(obj: scala.Any): Boolean = {
