@@ -7,18 +7,18 @@ This API is entirely asynchronous, so you'll want to know how to use Futures. So
 perform several operations for you so that you can know if an operation such as Droplet.create or an action have
 completed. "complete" methods also return futures.
 
-##Scaladoc
+## Scaladoc
 
 http://www.jeffshaw.me/digitalocean/
 
-##Instructions
+## Instructions
 
-###Dependency
+### Dependency
 
 This project is now in Maven Central for Scala 2.10, 2.11, and 2.12. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "4.0"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "5.0"
 ```
 
 Or, for a maven project:
@@ -27,11 +27,11 @@ Or, for a maven project:
 <dependency>
   <groupId>me.jeffshaw</groupId>
   <artifactId>digitalocean_2.12</artifactId>
-  <version>4.0</version>
+  <version>5.0</version>
 </dependency>
 ```
 
-###Local Compilation
+### Local Compilation
 
 Install SBT, clone this repository, and cd to it.
 
@@ -90,7 +90,12 @@ httpClient.close()
 
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
 
-##Changelog
+## Changelog
+
+### 5.0
+* Add support for Tags
+* Add support for Firewalls
+* Add compute droplet sizes
 
 ### 4.0
 * Add support for Scala 2.12
