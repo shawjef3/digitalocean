@@ -58,10 +58,3 @@ class FirewallSpec extends Suite {
     Await.result(deletes, 1 minute)
   }
 }
-
-object FirewallSpec {
-
-  import Firewall._
-
-
-}

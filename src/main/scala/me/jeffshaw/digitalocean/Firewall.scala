@@ -96,12 +96,6 @@ object Firewall extends Path with Listable[Firewall, responses.Firewalls] {
     client.get[Firewall](path)
   }
 
-  private def seqToOption[T](s: Seq[T]): Option[Seq[T]] = {
-    if (s.isEmpty)
-      None
-    else Some(s)
-  }
-
   private case class CreateOrUpdate(
     name: String,
     inboundRules: Seq[responses.Firewall.InboundRule],
@@ -226,7 +220,7 @@ object Firewall extends Path with Listable[Firewall, responses.Firewalls] {
       inboundRules: Seq[Firewall.InboundRule],
       outboundRules: Seq[Firewall.OutboundRule]
     ): AlterRules = {
-      apply(seqToOption(inboundRules), seqToOption(outboundRules))
+      apply(responses.seqToOption(inboundRules), responses.seqToOption(outboundRules))
     }
   }
 
@@ -298,27 +292,13 @@ object Firewall extends Path with Listable[Firewall, responses.Firewalls] {
   }
 
   case class Source private (
-    addresses: Option[Seq[Source.Address]],
-    dropletIds: Option[Seq[BigInt]],
-    loadBalancerUids: Option[Seq[String]],
-    tags: Option[Seq[String]]
+    addresses: Seq[Source.Address] = Seq(),
+    dropletIds: Seq[BigInt] = Seq(),
+    loadBalancerUids: Seq[String] = Seq(),
+    tags: Seq[String] = Seq()
   )
 
   object Source {
-    def apply(
-      addresses: Seq[Source.Address] = Seq(),
-      dropletIds: Seq[BigInt] = Seq(),
-      loadBalancerUids: Seq[String] = Seq(),
-      tags: Seq[String] = Seq()
-    ): Source = {
-      apply(
-        addresses = seqToOption(addresses),
-        dropletIds = seqToOption(dropletIds),
-        loadBalancerUids = seqToOption(loadBalancerUids),
-        tags = seqToOption(tags)
-      )
-    }
-
     case class Address(
       address: InetAddress,
       cidr: Option[Int] = None

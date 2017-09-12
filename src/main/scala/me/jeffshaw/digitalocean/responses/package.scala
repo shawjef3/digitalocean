@@ -8,6 +8,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 package object responses {
 
+  private[digitalocean] def seqToOption[T](s: Seq[T]): Option[Seq[T]] = {
+    if (s.isEmpty)
+      None
+    else Some(s)
+  }
+
   private[digitalocean] case class Meta(total: BigInt)
 
   private[digitalocean] case class Pages(
@@ -362,6 +368,32 @@ package object responses {
       )
 
     }
+
+    private[digitalocean] case class Source(
+      addresses: Option[Seq[digitalocean.Firewall.Source.Address]],
+      dropletIds: Option[Seq[BigInt]],
+      loadBalancerUids: Option[Seq[String]],
+      tags: Option[Seq[String]]
+    ) {
+      def toSource: digitalocean.Firewall.Source =
+        digitalocean.Firewall.Source(
+          addresses = addresses.getOrElse(Seq()),
+          dropletIds = dropletIds.getOrElse(Seq()),
+          loadBalancerUids = loadBalancerUids.getOrElse(Seq()),
+          tags = tags.getOrElse(Seq())
+        )
+    }
+
+    private[digitalocean] object Source {
+      def valueOf(source: digitalocean.Firewall.Source): Source =
+        Source(
+          addresses = seqToOption(source.addresses),
+          dropletIds = seqToOption(source.dropletIds),
+          loadBalancerUids = seqToOption(source.loadBalancerUids),
+          tags = seqToOption(source.tags)
+        )
+    }
+
   }
 
   private[digitalocean] case class Firewalls(
