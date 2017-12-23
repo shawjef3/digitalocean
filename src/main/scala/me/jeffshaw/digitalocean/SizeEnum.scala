@@ -36,6 +36,10 @@ case object `32gb` extends SizeEnum {
   override val slug: String = "32gb"
 }
 
+case object `m-1vcpu-8gb` extends SizeEnum {
+  override val slug: String = "m-1vcpu-8gb"
+}
+
 case object `m-32gb` extends SizeEnum {
   override val slug: String = "m-32gb"
 }
@@ -84,6 +88,10 @@ case object `c-32` extends SizeEnum {
   override val slug = "c-32"
 }
 
+case object `s-1vcpu-3gb` extends SizeEnum {
+  override val slug: String = "s-1vcpu-3gb"
+}
+
 case class OtherSize(slug: String) extends SizeEnum
 
 object SizeEnum {
@@ -104,6 +112,7 @@ object SizeEnum {
     `16gb`.slug -> `16gb`,
     `m-16gb`.slug -> `m-16gb`,
     `32gb`.slug -> `32gb`,
+    `m-1vcpu-8gb`.slug -> `m-1vcpu-8gb`,
     `m-32gb`.slug -> `m-32gb`,
     `48gb`.slug -> `48gb`,
     `64gb`.slug -> `64gb`,
@@ -114,6 +123,7 @@ object SizeEnum {
     `c-4`.slug -> `c-4`,
     `c-8`.slug -> `c-8`,
     `c-16`.slug -> `c-16`,
-    `c-32`.slug -> `c-32`
+    `c-32`.slug -> `c-32`,
+    `s-1vcpu-3gb`.slug -> `s-1vcpu-3gb`
   )
 }
