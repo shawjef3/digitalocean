@@ -2,7 +2,7 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "5.0"
+version := "5.1"
 
 libraryDependencies ++= Seq(
   "org.asynchttpclient" % "async-http-client" % "2.0.35",
@@ -14,11 +14,11 @@ libraryDependencies ++= Seq(
   "org.apache.logging.log4j" % "log4j-core" % "2.9.0" % "test"
 )
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.4"
 
-crossScalaVersions := Seq("2.11.11", "2.10.6")
+crossScalaVersions := Seq("2.11.12", "2.10.7")
 
-mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "4.0")
+mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "5.0")
 
 parallelExecution := false
 
