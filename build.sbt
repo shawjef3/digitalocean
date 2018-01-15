@@ -5,7 +5,7 @@ organization := "me.jeffshaw"
 version := "5.1"
 
 libraryDependencies ++= Seq(
-  "org.asynchttpclient" % "async-http-client" % "2.0.35",
+  "org.asynchttpclient" % "async-http-client" % "2.1.0",
   "org.json4s" %% "json4s-native" % "3.5.3",
   "com.typesafe" % "config" % "1.3.1" % "test",
   "org.scalatest" %% "scalatest" % "3.0.4" % "test",
