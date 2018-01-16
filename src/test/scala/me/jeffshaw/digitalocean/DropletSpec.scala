@@ -10,7 +10,7 @@ class DropletSpec extends Suite {
   test("Droplets can be created, listed, and deleted.") {
     val size = `512mb`
 
-    val t = for {
+    for {
       droplet <- Droplet.create(dropletName, testRegionSlug, size, testImageSlug, Seq.empty, false, false, false, None)
       droplets <- Droplet.list()
       _ = assert(droplets.exists(_.id == droplet.id))
@@ -21,7 +21,6 @@ class DropletSpec extends Suite {
       //Power it off (not necessary, but we don't have a test for Action.await yet).
       off <- droplet.powerOff()
       offComplete <- off.complete()
-      _ = assertResult(Action.Completed)(offComplete.status)
       //Wait for the droplet to stop existing.
       delete <- droplet.delete()
       () <- delete.complete()
@@ -29,9 +28,10 @@ class DropletSpec extends Suite {
       actions <- client.poll[Iterator[Action]](droplet.actions(), _.forall(_.status != Action.InProgress))
       //Assert that the droplet to stop appearing in the droplet list.
       droplets <- client.poll[Iterator[Droplet]](Droplet.list(), ! _.contains(droplet))
-    } yield println("deletion completed")
-
-    Await.result(t, 5 minutes)
+    } yield {
+      println("deletion completed")
+      assertResult(Action.Completed)(offComplete.status)
+    }
   }
 
   override protected def afterAll(): Unit = {

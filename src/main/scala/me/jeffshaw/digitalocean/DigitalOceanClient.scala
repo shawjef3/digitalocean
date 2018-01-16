@@ -93,7 +93,11 @@ case class DigitalOceanClient(
       if (statusCode < 300 &&
         response.getContentType == DigitalOceanClient.contentType
       ) {
-        parseJson(responseBody).camelizeKeys.extract[T]
+        try parseJson(responseBody).camelizeKeys.extract[T]
+        catch {
+          case e: MappingException =>
+            throw DigitalOceanClientException(response, cause = Some(e))
+        }
       } else {
         throw DigitalOceanClientException(response)
       }

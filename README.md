@@ -88,9 +88,15 @@ httpClient.close()
 //CTRL-D if you used :paste.
 ```
 
-To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console.
+To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console. WARNING: Digital Ocean might lock your account if you run the tests too often. You will want to notify them of what you are doing to prevent that. Also be aware that the floating ip tests don't clean up their test IPs if they fail.
 
 ## Changelog
+
+### 6.0
+* Updated async http client dependency
+* tests now use ScalaTest's async support
+* serialization exceptions are wrapped in DigitalOceanClientException
+* FloatingIp now has `assign` and `unassign` methods
 
 ### 5.1
 * Add m-1vcpu-8gb and s-1vcpu-3gb droplet sizes

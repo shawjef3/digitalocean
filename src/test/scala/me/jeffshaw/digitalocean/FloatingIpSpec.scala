@@ -1,36 +1,39 @@
 package me.jeffshaw.digitalocean
 
 import scala.concurrent.Await
+import scala.concurrent.duration._
 
 class FloatingIpSpec extends Suite {
-
-  var createdIp: Option[FloatingIp] = None
-
-  test("creates a floating ip") {
-    createdIp = Some(Await.result(FloatingIp.create(RegionEnum.fromSlug(testRegionSlug)), client.maxWaitPerRequest))
-
-    assert(createdIp.isDefined)
-  }
-
-  test("assigns a floating ip to a droplet") {
-    val ip = createdIp.get
-
-    val floatingIps = Await.result(FloatingIp.list(), client.maxWaitPerRequest)
-
-    assert(floatingIps.contains(ip))
-  }
-
-  test("deletes a floating ip") {
-    val ip = createdIp.get
-
-    val deleted = for {
-      () <- ip.delete()
-      floatingIps <- FloatingIp.list()
+  test("creates and deletes a floating ip assigned to a region") {
+    val region = RegionEnum.fromSlug(testRegionSlug)
+    for {
+      ip <- FloatingIp.create(region)
+      deleted <- ip.delete()
     } yield {
-      ! floatingIps.contains(ip)
+      assertResult(region)(ip.region.toEnum)
     }
-
-    assert(Await.result(deleted, client.maxWaitPerRequest * 2))
   }
 
+  test("creates and deletes a floating ip assigned to a droplet") {
+    withDroplet { droplet =>
+      for {
+        ip <- FloatingIp.create(droplet.id)
+        complete <- ip.complete()
+        afterAssignment <- FloatingIp(ip.ip)
+        unassignAction <- ip.unassign()
+        completedUnassignAction <- unassignAction.complete()
+        afterUnassignment <- FloatingIp(ip.ip)
+        () <- ip.delete()
+      } yield {
+        assertResult(Action.Completed)(complete.status)
+        assertResult(Some(droplet))(afterAssignment.droplet)
+        assert(afterUnassignment.droplet.isEmpty)
+      }
+    }
+  }
+
+  override protected def afterAll(): Unit = {
+    Await.result(deleteDroplets(), 3 minutes)
+    super.afterAll()
+  }
 }

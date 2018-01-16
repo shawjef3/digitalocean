@@ -6,9 +6,10 @@ import org.scalatest._
 import scala.concurrent._
 import duration._
 import org.asynchttpclient.DefaultAsyncHttpClient
+import scala.util.{Random, Success}
 
 abstract class Suite
-  extends FunSuite
+  extends AsyncFunSuite
   with Matchers
   with BeforeAndAfterAll {
 
@@ -33,6 +34,36 @@ abstract class Suite
   val dropletNamePrefix = "ScalaTest"
 
   val firewallNamePrefix = volumeNamePrefix
+
+  /**
+    * Perform some action with a droplet, cleaning up the droplet afterwards.
+    */
+  def withDroplet[A](test: Droplet => Future[A]): Future[A] = {
+    val dropletName = dropletNamePrefix + Random.nextInt()
+    val size = `512mb`
+
+    val dropletFuture =
+      for {
+        droplet <- Droplet.create(dropletName, testRegionSlug, size, testImageSlug, Seq.empty, false, false, false, None)
+        createComplete <- droplet.complete()
+      } yield droplet
+
+    val testResult = dropletFuture.flatMap(droplet => test(droplet))
+
+    testResult.transformWith {
+      case result =>
+        for {
+          droplet <- dropletFuture
+          deletion <- droplet.delete()
+          deletionCompletion <- deletion.complete()
+          // Even though the droplet is deleted, it can appear in the droplet list.
+          _ <- client.poll(Droplet.list(), (droplets: Iterator[Droplet]) => !droplets.exists(_.id == droplet.id))
+        } yield {
+          //get the result or throw its exception
+          result.get
+        }
+    }
+  }
 
   def listDroplets(): Future[List[Droplet]] = {
     for {

@@ -1,16 +1,17 @@
 package me.jeffshaw.digitalocean
 
-import scala.concurrent._
-
 class RegionSpec extends Suite {
 
   test("Regions can be listed by the client") {
-    assert(Await.result(Region.size, client.maxWaitPerRequest) > 0)
+    for (size <- Region.size()) yield {
+      assert(size > 0)
+    }
   }
 
   test("All regions are explicitly enumerated.") {
-    for (region <- Await.result(Region.list, client.maxWaitPerRequest).toSeq) {
-      assert(! region.toEnum.isInstanceOf[OtherRegion])
+    for (regions <- Region.list()) yield {
+      val asEnums = regions.map(_.toEnum)
+      assert(asEnums.forall(!_.isInstanceOf[OtherRegion]))
     }
   }
 

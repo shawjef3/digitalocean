@@ -11,6 +11,8 @@ private[digitalocean] case object ActionResourceTypeSerializer extends CustomSer
         Action.Backend
       case JString("image") =>
         Action.Image
+      case JString("floating_ip") =>
+        Action.FloatingIp
     },
     {
       case Action.Droplet =>
@@ -19,6 +21,8 @@ private[digitalocean] case object ActionResourceTypeSerializer extends CustomSer
         JString("backend")
       case Action.Image =>
         JString("image")
+      case Action.FloatingIp =>
+        JString("floating_ip")
     }
   )
 )

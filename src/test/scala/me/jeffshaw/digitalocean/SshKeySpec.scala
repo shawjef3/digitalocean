@@ -61,7 +61,7 @@ class SshKeySpec extends Suite {
     val publicKey: String = genPK
     val updatedName = name + "Updated"
 
-    val t = for {
+    for {
       key <- SshKey.create(name, publicKey)
       keys <- pollKeys(_.contains(key))
       newKey <- SshKey.setNameById(key.id, updatedName)
@@ -70,9 +70,7 @@ class SshKeySpec extends Suite {
       _ = assert(key == newKey)
       () <- SshKey.deleteById(key.id)
       keysAfterDelete <- pollKeys(! _.exists(_.id == key.id))
-    } yield ()
-
-    Await.result(t, 10 minutes)
+    } yield succeed
   }
 
   test("Ssh keys can be created, renamed, listed, and deleted (by fingerprint).") {
@@ -80,7 +78,7 @@ class SshKeySpec extends Suite {
     val publicKey: String = genPK
     val updatedName = name + "Updated"
 
-    val t = for {
+    for {
       key <- SshKey.create(name, publicKey)
       keys <- pollKeys(_.contains(key))
       newKey <- SshKey.setNameByFingerprint(key.fingerprint, updatedName)
@@ -89,9 +87,7 @@ class SshKeySpec extends Suite {
       _ = assert(key == newKey)
       () <- SshKey.deleteByFingerprint(key.fingerprint)
       keysAfterDelete <- pollKeys(! _.exists(_.fingerprint == key.fingerprint))
-    } yield ()
-
-    Await.result(t, 10 minutes)
+    } yield succeed
   }
 
   test("Ssh keys can be created, renamed, and deleted (native).") {
@@ -99,7 +95,7 @@ class SshKeySpec extends Suite {
     val publicKey: String = genPK
     val updatedName = name + "Updated"
 
-    val t = for {
+    for {
       key <- SshKey.create(name, publicKey)
       keys <- pollKeys(_.contains(key))
       newKey <- key.setName(updatedName)
@@ -108,8 +104,7 @@ class SshKeySpec extends Suite {
       _ = assert(key == newKey)
       () <- newKey.delete()
       keysAfterDelete <- pollKeys(! _.contains(newKey))
-    } yield ()
+    } yield succeed
 
-    Await.result(t, 10 minutes)
   }
 }

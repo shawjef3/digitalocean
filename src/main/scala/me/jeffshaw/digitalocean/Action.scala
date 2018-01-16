@@ -75,6 +75,8 @@ object Action extends Path with Listable[Action, responses.Actions] {
 
   case object Backend extends ResourceType
 
+  case object FloatingIp extends ResourceType
+
   sealed trait Status
 
   case object InProgress extends Status
