@@ -2,12 +2,12 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "5.1"
+version := "6.0"
 
 libraryDependencies ++= Seq(
   "org.asynchttpclient" % "async-http-client" % "2.1.0",
   "org.json4s" %% "json4s-native" % "3.5.3",
-  "com.typesafe" % "config" % "1.3.1" % "test",
+  "com.typesafe" % "config" % "1.3.2" % "test",
   "org.scalatest" %% "scalatest" % "3.0.4" % "test",
   "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.0" % "test",
   "org.apache.logging.log4j" % "log4j-api" % "2.9.0" % "test",
