@@ -13,6 +13,7 @@ package object digitalocean {
       Action.ResourceType.Serializer +
       Action.Status.Serializer +
       Image.Type.Serializer +
+      Image.Status.Serializer +
       RegionEnum.Serializer +
       Firewall.Source.Address.Serializer +
       responses.Firewall.Protocol.Serializer +

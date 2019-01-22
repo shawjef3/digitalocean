@@ -14,7 +14,13 @@ case class Image(
   slug: Option[String],
   public: Boolean,
   regions: Seq[String],
-  createdAt: Instant
+  createdAt: Instant,
+  minDiskSize: BigInt,
+  sizeGigabytes: BigDecimal,
+  description: Option[String],
+  tags: Set[String],
+  status: Image.Status,
+  errorMessage: String
 ) {
   def delete(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Unit] = {
     Image.delete(id)
@@ -97,23 +103,33 @@ object Image
 
   object Type extends HasBiMapSerializer[Type] {
 
-    case object Snapshot extends Type {
-      val StringValue: String = "snapshot"
-    }
+    case object Snapshot extends Type
 
-    case object Backup extends Type {
-      val StringValue: String = "backup"
-    }
+    case object Backup extends Type
 
-    case object Custom extends Type {
-      val StringValue: String = "custom"
-    }
+    case object Custom extends Type
 
     override private[digitalocean] val jsonMap: Map[Type, JValue] = Map(
-      Snapshot -> JString(Snapshot.StringValue),
-      Backup -> JString(Backup.StringValue),
-      Custom -> JString(Custom.StringValue)
+      Snapshot -> JString("snapshot"),
+      Backup -> JString("backup"),
+      Custom -> JString("custom")
     )
+  }
+
+  sealed trait Status
+
+  object Status extends HasBiMapSerializer[Status] {
+    case object New extends Status
+    case object Available extends Status
+    case object Pending extends Status
+    case object Deleted extends Status
+    override private[digitalocean] val jsonMap: Map[Status, JValue] =
+      Map(
+        New -> JString("NEW"),
+        Available -> JString("available"),
+        Pending -> JString("pending"),
+        Deleted -> JString("deleted")
+      )
   }
 
   sealed trait ListType {
