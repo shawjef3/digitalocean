@@ -6,12 +6,12 @@ class SizeSpec extends Suite {
   var cache: Option[Seq[Size]] = None
 
   def getCache: Seq[Size] = {
-    val regions = cache.getOrElse(Await.result(Size.list(), 5 seconds)).toSeq
+    val sizes = cache.getOrElse(Await.result(Size.list(), 5 seconds)).toSeq
 
     if (cache.isEmpty) {
-      cache = Some(regions)
+      cache = Some(sizes)
     }
-    regions
+    sizes
   }
 
   test("Sizes can be listed by the client") {
@@ -27,6 +27,13 @@ class SizeSpec extends Suite {
   test("All sizes are explicitly enumerated.") {
     val sizes = getCache
 
-    assert(sizes.forall(s => ! s.toEnum.isInstanceOf[OtherSize]))
+    val nonEnumSizes = sizes.map(_.toEnum).filter {
+      case o: OtherSize =>
+        true
+      case _ =>
+        false
+    }
+
+    assert(nonEnumSizes.isEmpty)
   }
 }

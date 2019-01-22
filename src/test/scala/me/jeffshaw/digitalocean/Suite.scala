@@ -6,7 +6,7 @@ import org.scalatest._
 import scala.concurrent._
 import duration._
 import org.asynchttpclient.DefaultAsyncHttpClient
-import scala.util.{Random, Success}
+import scala.util.Random
 
 abstract class Suite
   extends AsyncFunSuite

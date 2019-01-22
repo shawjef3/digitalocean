@@ -92,6 +92,62 @@ case object `s-1vcpu-3gb` extends SizeEnum {
   override val slug: String = "s-1vcpu-3gb"
 }
 
+case object `s-6vcpu-16gb` extends SizeEnum {
+  override val slug: String = "s-6vcpu-16gb"
+}
+
+case object `s-1vcpu-2gb` extends SizeEnum {
+  override val slug: String = "s-1vcpu-2gb"
+}
+
+case object `s-12vcpu-48gb` extends SizeEnum {
+  override val slug: String = "s-12vcpu-48gb"
+}
+
+case object `s-2vcpu-2gb` extends SizeEnum {
+  override val slug: String = "s-2vcpu-2gb"
+}
+
+case object `s-32vcpu-192gb` extends SizeEnum {
+  override val slug: String = "s-32vcpu-192gb"
+}
+
+case object `s-20vcpu-96gb` extends SizeEnum {
+  override val slug: String = "s-20vcpu-96gb"
+}
+
+case object `s-16vcpu-64gb` extends SizeEnum {
+  override val slug: String = "s-16vcpu-64gb"
+}
+
+case object `s-3vcpu-1gb` extends SizeEnum {
+  override val slug: String = "s-3vcpu-1gb"
+}
+
+case object `s-24vcpu-128gb` extends SizeEnum {
+  override val slug: String = "s-24vcpu-128gb"
+}
+
+case object `s-1vcpu-1gb` extends SizeEnum {
+  override val slug: String = "s-1vcpu-1gb"
+}
+
+case object `c-48` extends SizeEnum {
+  override val slug: String = "c-48"
+}
+
+case object `s-4vcpu-8gb` extends SizeEnum {
+  override val slug: String = "s-4vcpu-8gb"
+}
+
+case object `s-8vcpu-32gb` extends SizeEnum {
+  override val slug: String = "s-8vcpu-32gb"
+}
+
+case object `s-2vcpu-4gb` extends SizeEnum {
+  override val slug: String = "s-2vcpu-4gb"
+}
+
 case class OtherSize(slug: String) extends SizeEnum
 
 object SizeEnum {
@@ -124,6 +180,20 @@ object SizeEnum {
     `c-8`.slug -> `c-8`,
     `c-16`.slug -> `c-16`,
     `c-32`.slug -> `c-32`,
-    `s-1vcpu-3gb`.slug -> `s-1vcpu-3gb`
+    `s-1vcpu-3gb`.slug -> `s-1vcpu-3gb`,
+    `s-6vcpu-16gb`.slug -> `s-6vcpu-16gb`,
+    `s-1vcpu-2gb`.slug -> `s-1vcpu-2gb`,
+    `s-12vcpu-48gb`.slug -> `s-12vcpu-48gb`,
+    `s-2vcpu-2gb`.slug -> `s-2vcpu-2gb`,
+    `s-32vcpu-192gb`.slug -> `s-32vcpu-192gb`,
+    `s-20vcpu-96gb`.slug -> `s-20vcpu-96gb`,
+    `s-16vcpu-64gb`.slug -> `s-16vcpu-64gb`,
+    `s-3vcpu-1gb`.slug -> `s-3vcpu-1gb`,
+    `s-24vcpu-128gb`.slug -> `s-24vcpu-128gb`,
+    `s-1vcpu-1gb`.slug -> `s-1vcpu-1gb`,
+    `c-48`.slug -> `c-48`,
+    `s-4vcpu-8gb`.slug -> `s-4vcpu-8gb`,
+    `s-8vcpu-32gb`.slug -> `s-8vcpu-32gb`,
+    `s-2vcpu-4gb`.slug -> `s-2vcpu-4gb`
   )
 }

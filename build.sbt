@@ -2,7 +2,7 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "6.0"
+version := "6.1"
 
 libraryDependencies ++= Seq(
   "org.asynchttpclient" % "async-http-client" % "2.1.0",
@@ -18,7 +18,7 @@ scalaVersion := "2.12.4"
 
 crossScalaVersions := Seq("2.11.12", "2.10.7")
 
-mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "5.0")
+mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "6.0")
 
 parallelExecution := false
 
