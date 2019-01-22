@@ -1,7 +1,8 @@
 package me.jeffshaw.digitalocean
 
 import java.time.Instant
-
+import me.jeffshaw.digitalocean.responses.HasBiMapSerializer
+import org.json4s.{JString, JValue}
 import scala.concurrent._
 
 case class Action(
@@ -77,6 +78,15 @@ object Action extends Path with Listable[Action, responses.Actions] {
 
   case object FloatingIp extends ResourceType
 
+  private[digitalocean] object ResourceType extends HasBiMapSerializer[ResourceType] {
+    override private[digitalocean] val jsonMap: Map[ResourceType, JValue] = Map(
+      Droplet -> JString("droplet"),
+      Backend -> JString("backend"),
+      Image -> JString("image"),
+      FloatingIp -> JString("floating_ip")
+    )
+  }
+
   sealed trait Status
 
   case object InProgress extends Status
@@ -84,4 +94,12 @@ object Action extends Path with Listable[Action, responses.Actions] {
   case object Completed extends Status
 
   case object Errored extends Status
+
+  private[digitalocean] object Status extends HasBiMapSerializer[Status] {
+    override private[digitalocean] val jsonMap: Map[Status, JValue] = Map(
+      InProgress -> JString("in-progress"),
+      Completed -> JString("completed"),
+      Errored -> JString("errored")
+    )
+  }
 }

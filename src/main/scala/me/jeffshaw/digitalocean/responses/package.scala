@@ -2,7 +2,7 @@ package me.jeffshaw
 package digitalocean
 
 import java.time.Instant
-import org.json4s.CustomSerializer
+import org.json4s.{CustomSerializer, JValue}
 import org.json4s.JsonAST.JString
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -339,7 +339,7 @@ package object responses {
       val StringValue: String
     }
 
-    object Protocol {
+    object Protocol extends HasBiMapSerializer[Protocol] {
 
       case object Tcp extends Protocol {
         val StringValue = "tcp"
@@ -353,19 +353,12 @@ package object responses {
         val StringValue = "icmp"
       }
 
-      private[digitalocean] case object Serializer extends CustomSerializer[Protocol](format =>
-        (
-          {
-            case JString(Tcp.StringValue) => Tcp
-            case JString(Udp.StringValue) => Udp
-            case JString(Icmp.StringValue) => Icmp
-          },
-          {
-            case tpe: Protocol =>
-              JString(tpe.StringValue)
-          }
+      override private[digitalocean] val jsonMap: Map[Protocol, JValue] =
+        Map(
+          Tcp -> JString("tcp"),
+          Udp -> JString("udp"),
+          Icmp -> JString("icmp")
         )
-      )
 
     }
 

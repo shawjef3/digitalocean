@@ -1,8 +1,8 @@
 package me.jeffshaw.digitalocean
 
 import java.time.Instant
-import me.jeffshaw.digitalocean.responses.PagedResponse
-import org.json4s.CustomSerializer
+import me.jeffshaw.digitalocean.responses.{HasBiMapSerializer, PagedResponse}
+import org.json4s.JValue
 import org.json4s.JsonAST.JString
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -95,7 +95,7 @@ object Image
 
   sealed trait Type
 
-  object Type {
+  object Type extends HasBiMapSerializer[Type] {
 
     case object Snapshot extends Type {
       val StringValue: String = "snapshot"
@@ -105,17 +105,14 @@ object Image
       val StringValue: String = "backup"
     }
 
-    private[digitalocean] case object Serializer extends CustomSerializer[Type](format =>
-      (
-        {
-          case JString(Snapshot.StringValue) => Snapshot
-          case JString(Backup.StringValue) => Backup
-        },
-        {
-          case tpe: Type =>
-            JString(tpe.toString)
-        }
-      )
+    case object Custom extends Type {
+      val StringValue: String = "custom"
+    }
+
+    override private[digitalocean] val jsonMap: Map[Type, JValue] = Map(
+      Snapshot -> JString(Snapshot.StringValue),
+      Backup -> JString(Backup.StringValue),
+      Custom -> JString(Custom.StringValue)
     )
   }
 

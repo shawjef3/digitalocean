@@ -1,6 +1,7 @@
 package me.jeffshaw.digitalocean
 
-import org.json4s.CustomSerializer
+import me.jeffshaw.digitalocean.responses.HasBiMapSerializer
+import org.json4s.JValue
 import org.json4s.JsonAST.JString
 
 sealed trait Status
@@ -13,21 +14,12 @@ case object Off extends Status
 
 case object Archive extends Status
 
-object Status {
-  private[digitalocean] case object Serializer extends CustomSerializer[Status](format =>
-    (
-      {
-        case JString("new") => New
-        case JString("active") => Active
-        case JString("off") => Off
-        case JString("archive") => Archive
-      },
-      {
-        case New => JString("new")
-        case Active => JString("active")
-        case Off => JString("off")
-        case Archive => JString("archive")
-      }
+object Status extends HasBiMapSerializer[Status] {
+  override private[digitalocean] val jsonMap: Map[Status, JValue] =
+    Map[Status, JValue](
+      New -> JString("new"),
+      Active -> JString("active"),
+      Off -> JString("off"),
+      Archive -> JString("archive")
     )
-  )
 }

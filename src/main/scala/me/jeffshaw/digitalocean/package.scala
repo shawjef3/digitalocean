@@ -10,8 +10,8 @@ package object digitalocean {
       Status.Serializer +
       Inet4AddressSerializer +
       Inet6AddressSerializer +
-      ActionResourceTypeSerializer +
-      ActionStatusSerializer +
+      Action.ResourceType.Serializer +
+      Action.Status.Serializer +
       Image.Type.Serializer +
       RegionEnum.Serializer +
       Firewall.Source.Address.Serializer +

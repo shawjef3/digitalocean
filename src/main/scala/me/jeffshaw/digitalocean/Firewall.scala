@@ -2,6 +2,8 @@ package me.jeffshaw.digitalocean
 
 import java.net.InetAddress
 import java.time.Instant
+import me.jeffshaw.digitalocean.responses.HasBiMapSerializer
+import org.json4s
 import org.json4s.{CustomSerializer, Extraction}
 import org.json4s.JsonAST._
 import org.json4s.JsonDSL.WithBigDecimal._
@@ -344,7 +346,7 @@ object Firewall extends Path with Listable[Firewall, responses.Firewalls] {
     val StringValue: String
   }
 
-  object Status {
+  object Status extends HasBiMapSerializer[Status] {
     case object Waiting extends Status {
       override val StringValue: String = "waiting"
     }
@@ -355,19 +357,12 @@ object Firewall extends Path with Listable[Firewall, responses.Firewalls] {
       override val StringValue: String = "failed"
     }
 
-    private[digitalocean] case object Serializer extends CustomSerializer[Status](format =>
-      (
-        {
-          case JString(Waiting.StringValue) => Waiting
-          case JString(Succeeded.StringValue) => Succeeded
-          case JString(Failed.StringValue) => Failed
-        },
-        {
-          case tpe: Status =>
-            JString(tpe.StringValue)
-        }
+    override private[digitalocean] val jsonMap: Map[Status, json4s.JValue] =
+      Map(
+        Waiting -> JString(Waiting.StringValue),
+        Succeeded -> JString(Succeeded.StringValue),
+        Failed -> JString(Failed.StringValue)
       )
-    )
   }
 
   case class PendingChange(
