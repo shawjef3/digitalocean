@@ -2,7 +2,7 @@ package me.jeffshaw
 package digitalocean
 
 import java.time.Instant
-import org.json4s.{CustomSerializer, JValue}
+import org.json4s.JValue
 import org.json4s.JsonAST.JString
 import scala.concurrent.{ExecutionContext, Future}
 
