@@ -27,7 +27,7 @@ Or, for a maven project:
 <dependency>
   <groupId>me.jeffshaw</groupId>
   <artifactId>digitalocean_2.12</artifactId>
-  <version>6.0</version>
+  <version>6.1</version>
 </dependency>
 ```
 
