@@ -5,16 +5,16 @@ organization := "me.jeffshaw"
 version := "6.1"
 
 libraryDependencies ++= Seq(
-  "org.asynchttpclient" % "async-http-client" % "2.1.0",
-  "org.json4s" %% "json4s-native" % "3.5.3",
-  "com.typesafe" % "config" % "1.3.2" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.4" % "test",
-  "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.9.0" % "test",
-  "org.apache.logging.log4j" % "log4j-api" % "2.9.0" % "test",
-  "org.apache.logging.log4j" % "log4j-core" % "2.9.0" % "test"
+  "org.asynchttpclient" % "async-http-client" % "2.6.0",
+  "org.json4s" %% "json4s-native" % "3.6.3",
+  "com.typesafe" % "config" % "1.3.3" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+  "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.11.1" % "test",
+  "org.apache.logging.log4j" % "log4j-api" % "2.11.1" % "test",
+  "org.apache.logging.log4j" % "log4j-core" % "2.11.1" % "test"
 )
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.8"
 
 crossScalaVersions := Seq("2.11.12", "2.10.7")
 

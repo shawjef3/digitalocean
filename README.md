@@ -18,7 +18,7 @@ http://www.jeffshaw.me/digitalocean/
 This project is now in Maven Central for Scala 2.10, 2.11, and 2.12. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "6.0"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "6.1"
 ```
 
 Or, for a maven project:
@@ -91,6 +91,10 @@ httpClient.close()
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console. WARNING: Digital Ocean might lock your account if you run the tests too often. You will want to notify them of what you are doing to prevent that. Also be aware that the floating ip tests don't clean up their test IPs if they fail.
 
 ## Changelog
+
+### 6.1
+* Added new droplet sizes
+* updated dependencies: scala 2.12, typesafe config, async http client, json4s
 
 ### 6.0
 * Updated async http client dependency
