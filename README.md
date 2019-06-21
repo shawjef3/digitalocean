@@ -100,6 +100,7 @@ To run tests, set your api token in src/test/resources/application.conf, and the
 * Added method to create volumes from snapshots
 * Add SOA DNS records
 * Added publication for Scala 2.13
+* updated dependencies: async http client, json4s
 
 ### 6.1
 * Added new droplet sizes
