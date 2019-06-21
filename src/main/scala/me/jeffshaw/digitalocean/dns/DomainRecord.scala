@@ -113,3 +113,14 @@ case class NS(
 }
 
 object NS extends StringValueOfObjectName
+
+case class SOA(
+  domainName: String,
+  id: BigInt,
+  ttl: Int,
+  name: String
+) extends DomainRecord {
+  override val `type`: String = SOA.StringValue
+}
+
+object SOA extends StringValueOfObjectName

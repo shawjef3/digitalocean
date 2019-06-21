@@ -15,10 +15,10 @@ http://www.jeffshaw.me/digitalocean/
 
 ### Dependency
 
-This project is now in Maven Central for Scala 2.10, 2.11, and 2.12. You can add it to your dependencies in your project's sbt file.
+This project is now in Maven Central for Scala 2.10, 2.11, 2.12, and 2.13. You can add it to your dependencies in your project's sbt file.
 
 ```scala
-libraryDependencies += "me.jeffshaw" %% "digitalocean" % "6.1"
+libraryDependencies += "me.jeffshaw" %% "digitalocean" % "6.2"
 ```
 
 Or, for a maven project:
@@ -26,8 +26,8 @@ Or, for a maven project:
 ```xml
 <dependency>
   <groupId>me.jeffshaw</groupId>
-  <artifactId>digitalocean_2.12</artifactId>
-  <version>6.1</version>
+  <artifactId>digitalocean_2.13</artifactId>
+  <version>6.2</version>
 </dependency>
 ```
 
@@ -91,6 +91,15 @@ httpClient.close()
 To run tests, set your api token in src/test/resources/application.conf, and then run test in the sbt console. WARNING: Digital Ocean might lock your account if you run the tests too often. You will want to notify them of what you are doing to prevent that. Also be aware that the floating ip tests don't clean up their test IPs if they fail.
 
 ## Changelog
+
+### 6.2
+* Digital Ocean no longer sends the charset in the content-type
+* Add custom image type
+* Add new droplet sizes
+* Add filesystem type and label fields
+* Added method to create volumes from snapshots
+* Add SOA DNS records
+* Added publication for Scala 2.13
 
 ### 6.1
 * Added new droplet sizes

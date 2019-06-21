@@ -2,23 +2,25 @@ name := "digitalocean"
 
 organization := "me.jeffshaw"
 
-version := "6.1"
+version := "6.2"
 
 libraryDependencies ++= Seq(
-  "org.asynchttpclient" % "async-http-client" % "2.6.0",
-  "org.json4s" %% "json4s-native" % "3.6.3",
+  "org.asynchttpclient" % "async-http-client" % "2.10.0",
+  "org.json4s" %% "json4s-native" % "3.6.6",
   "com.typesafe" % "config" % "1.3.3" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
   "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.11.1" % "test",
   "org.apache.logging.log4j" % "log4j-api" % "2.11.1" % "test",
   "org.apache.logging.log4j" % "log4j-core" % "2.11.1" % "test"
 )
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.0"
 
-crossScalaVersions := Seq("2.11.12", "2.10.7")
+crossScalaVersions := Seq("2.12.8", "2.11.12", "2.10.7")
 
-mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "6.0")
+scalacOptions ++= Seq("-language:postfixOps")
+
+mimaPreviousArtifacts := Set("me.jeffshaw" %% "digitalocean" % "6.1")
 
 parallelExecution := false
 

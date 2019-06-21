@@ -13,7 +13,10 @@ case class Volume(
   name: String,
   description: Option[String],
   sizeGigabytes: Int,
-  createdAt: Instant
+  createdAt: Instant,
+  filesystemType: String,
+  filesystemLabel: String,
+  tags: Seq[String]
 ) {
 
   def exists()(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Boolean] = {
@@ -74,12 +77,49 @@ object Volume
     } yield response.volume
   }
 
-  def create(sizeGigabytes: Int, name: String, description: Option[String], region: RegionEnum)(implicit client: DigitalOceanClient, ec: ExecutionContext): Future[Volume] = {
+  def create(
+    sizeGigabytes: Int,
+    name: String,
+    region: RegionEnum,
+    description: Option[String] = None,
+    filesystemType: Option[String] = None,
+    filesystemLabel: Option[String] = None,
+    tags: Seq[String] = Seq.empty
+  )(implicit client: DigitalOceanClient,
+    ec: ExecutionContext
+  ): Future[Volume] = {
     val message: JValue =
       ("size_gigabytes" -> sizeGigabytes) ~
         ("name" -> name) ~
         ("description" -> description) ~
-        ("region" -> region.slug)
+        ("region" -> region.slug) ~
+        ("filesystem_type" -> filesystemType) ~
+        ("filesystem_label" -> filesystemLabel) ~
+        ("tags" -> tags)
+    for {
+      response <- client.post[responses.Volume](path, message)
+    } yield response.volume
+  }
+
+  def createFromSnapshot(
+    sizeGigabytes: Int,
+    name: String,
+    snapshotId: String,
+    description: Option[String] = None,
+    filesystemType: Option[String] = None,
+    filesystemLabel: Option[String] = None,
+    tags: Seq[String] = Seq.empty
+  )(implicit client: DigitalOceanClient,
+    ec: ExecutionContext
+  ): Future[Volume] = {
+    val message: JValue =
+      ("size_gigabytes" -> sizeGigabytes) ~
+        ("name" -> name) ~
+        ("description" -> description) ~
+        ("snapshot_id" -> snapshotId) ~
+        ("filesystem_type" -> filesystemType) ~
+        ("filesystem_label" -> filesystemLabel) ~
+        ("tags" -> tags)
     for {
       response <- client.post[responses.Volume](path, message)
     } yield response.volume

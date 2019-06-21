@@ -1,6 +1,6 @@
 package me.jeffshaw.digitalocean
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.util.Random
 
@@ -10,7 +10,7 @@ class VolumeSpec
   test("volumes can be created and destroyed") {
     val volumeName = volumeNamePrefix + Random.nextInt()
     for {
-      v <- Volume.create(1, volumeName, None, NewYork1)
+      v <- Volume.create(1, volumeName, NewYork1)
       deletion <- v.delete()
       () <- deletion.complete()
       volumes <- client.poll[Iterator[Volume]](Volume.list(), ! _.contains(v))
@@ -23,7 +23,7 @@ class VolumeSpec
   test("volumes can be resized") {
     val volumeName = volumeNamePrefix + Random.nextInt()
     for {
-      v <- Volume.create(1, volumeName, None, NewYork1)
+      v <- Volume.create(1, volumeName, NewYork1)
       resizeAction <- v.resize(2)
       _ <- resizeAction.complete()
       v2 <- Volume(v.id)
@@ -36,7 +36,7 @@ class VolumeSpec
     val size = `512mb`
 
     for {
-      v <- Volume.create(1, volumeName, None, NewYork1)
+      v <- Volume.create(1, volumeName, NewYork1)
       d <- Droplet.create(dropletName, NewYork1, size, testImageSlug, Seq.empty, false, false, false, None)
       _ <- d.complete()
       action <- d.attach(v)
@@ -47,12 +47,19 @@ class VolumeSpec
   override protected def afterAll(): Unit = {
     Await.result(deleteDroplets(), 3 minutes)
 
-    val volumes =
-      Await.result(listVolumes(), 3 minutes)
+    val volumeDeletions =
+      for {
+        volumes <- listVolumes()
+        detatches <-
+          Future.sequence(
+            for {
+              volume <- volumes
+            } yield volume.detachAll().flatMap(a => Future.sequence(a.map(_.complete())))
+          )
+        deletions <- Future.sequence(volumes.map(_.delete()))
+      } yield deletions
 
-    for {
-      volume <- volumes
-    } yield util.Try(Await.result(volume.delete(), 20 seconds))
+    Await.result(volumeDeletions, 3 minutes)
 
     super.afterAll()
   }

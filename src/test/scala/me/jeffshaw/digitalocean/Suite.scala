@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 import com.typesafe.config.ConfigFactory
 import org.scalatest._
 import scala.concurrent._
-import duration._
+import scala.concurrent.duration._
 import org.asynchttpclient.DefaultAsyncHttpClient
 import scala.util.Random
 

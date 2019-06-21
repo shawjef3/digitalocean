@@ -91,7 +91,7 @@ case class DigitalOceanClient(
       val statusCode = response.getStatusCode
 
       if (statusCode < 300 &&
-        response.getContentType == DigitalOceanClient.contentType
+        response.getContentType.startsWith(DigitalOceanClient.contentType)
       ) {
         try parseJson(responseBody).camelizeKeys.extract[T]
         catch {
@@ -193,7 +193,7 @@ case class DigitalOceanClient(
 }
 
 object DigitalOceanClient {
-  val contentType = "application/json; charset=utf-8"
+  val contentType = "application/json"
 
   val host =
     new RequestBuilder().

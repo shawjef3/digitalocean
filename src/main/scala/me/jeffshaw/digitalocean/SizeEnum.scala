@@ -148,6 +148,43 @@ case object `s-2vcpu-4gb` extends SizeEnum {
   override val slug: String = "s-2vcpu-4gb"
 }
 
+case object `g-2vcpu-8gb` extends SizeEnum {
+  override val slug: String = "g-2vcpu-8gb"
+}
+case object `gd-2vcpu-8gb` extends SizeEnum {
+  override val slug: String = "gd-2vcpu-8gb"
+}
+case object `g-4vcpu-16gb` extends SizeEnum {
+  override val slug: String = "g-4vcpu-16gb"
+}
+case object `gd-4vcpu-16gb` extends SizeEnum {
+  override val slug: String = "gd-4vcpu-16gb"
+}
+case object `g-8vcpu-32gb` extends SizeEnum {
+  override val slug: String = "g-8vcpu-32gb"
+}
+case object `gd-8vcpu-32gb` extends SizeEnum {
+  override val slug: String = "gd-8vcpu-32gb"
+}
+case object `g-16vcpu-64gb` extends SizeEnum {
+  override val slug: String = "g-16vcpu-64gb"
+}
+case object `gd-16vcpu-64gb` extends SizeEnum {
+  override val slug: String = "gd-16vcpu-64gb"
+}
+case object `g-32vcpu-128gb` extends SizeEnum {
+  override val slug: String = "g-32vcpu-128gb"
+}
+case object `gd-32vcpu-128gb` extends SizeEnum {
+  override val slug: String = "gd-32vcpu-128gb"
+}
+case object `g-40vcpu-160gb` extends SizeEnum {
+  override val slug: String = "g-40vcpu-160gb"
+}
+case object `gd-40vcpu-160gb` extends SizeEnum {
+  override val slug: String = "gd-40vcpu-160gb"
+}
+
 case class OtherSize(slug: String) extends SizeEnum
 
 object SizeEnum {
@@ -194,6 +231,18 @@ object SizeEnum {
     `c-48`.slug -> `c-48`,
     `s-4vcpu-8gb`.slug -> `s-4vcpu-8gb`,
     `s-8vcpu-32gb`.slug -> `s-8vcpu-32gb`,
-    `s-2vcpu-4gb`.slug -> `s-2vcpu-4gb`
+    `s-2vcpu-4gb`.slug -> `s-2vcpu-4gb`,
+    `g-2vcpu-8gb`.slug -> `g-2vcpu-8gb`,
+    `gd-2vcpu-8gb`.slug -> `gd-2vcpu-8gb`,
+    `g-4vcpu-16gb`.slug -> `g-4vcpu-16gb`,
+    `gd-4vcpu-16gb`.slug -> `gd-4vcpu-16gb`,
+    `g-8vcpu-32gb`.slug -> `g-8vcpu-32gb`,
+    `gd-8vcpu-32gb`.slug -> `gd-8vcpu-32gb`,
+    `g-16vcpu-64gb`.slug -> `g-16vcpu-64gb`,
+    `gd-16vcpu-64gb`.slug -> `gd-16vcpu-64gb`,
+    `g-32vcpu-128gb`.slug -> `g-32vcpu-128gb`,
+    `gd-32vcpu-128gb`.slug -> `gd-32vcpu-128gb`,
+    `g-40vcpu-160gb`.slug -> `g-40vcpu-160gb`,
+    `gd-40vcpu-160gb`.slug -> `gd-40vcpu-160gb`
   )
 }

@@ -38,6 +38,8 @@ private[digitalocean] case class DomainRecordFields(
         dns.SRV(domainName, id, name.get, inetAddress.get, priority.get, weight.get)
       case dns.NS.StringValue =>
         dns.NS(domainName, id, data.get)
+      case dns.SOA.StringValue =>
+        dns.SOA(domainName, id, data.get.toInt, name.get)
     }
   }
 }

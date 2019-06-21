@@ -105,11 +105,16 @@ object Image
       val StringValue: String = "backup"
     }
 
+    case object Custom extends Type {
+      val StringValue: String = "custom"
+    }
+
     private[digitalocean] case object Serializer extends CustomSerializer[Type](format =>
       (
         {
           case JString(Snapshot.StringValue) => Snapshot
           case JString(Backup.StringValue) => Backup
+          case JString(Custom.StringValue) => Custom
         },
         {
           case tpe: Type =>
